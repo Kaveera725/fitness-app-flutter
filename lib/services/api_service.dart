@@ -6,14 +6,39 @@ class UserSession {
   final int id;
   final String email;
   final String? name;
+  final String role;
 
-  UserSession({required this.id, required this.email, this.name});
+  UserSession({
+    required this.id,
+    required this.email,
+    this.name,
+    this.role = 'user',
+  });
+
+  bool get isAdmin => role.toLowerCase() == 'admin';
+  bool get isCoach => role.toLowerCase() == 'coach';
+  bool get isPremium => role.toLowerCase() == 'premium';
+  bool get isStandardUser => role.toLowerCase() == 'user';
+
+  String get roleTitle {
+    switch (role.toLowerCase()) {
+      case 'admin':
+        return 'Admin';
+      case 'coach':
+        return 'Coach';
+      case 'premium':
+        return 'Premium Member';
+      default:
+        return 'Member';
+    }
+  }
 
   factory UserSession.fromJson(Map<String, dynamic> json) {
     return UserSession(
       id: json['id'] ?? json['user_id'] ?? 0,
       email: json['email'] ?? '',
       name: json['name'],
+      role: json['role'] ?? 'user',
     );
   }
 }
@@ -74,6 +99,7 @@ class ApiService {
     required String email,
     required String password,
     String? name,
+    String role = 'user',
   }) async {
     try {
       final response = await http.post(
@@ -83,6 +109,7 @@ class ApiService {
           'email': email.trim(),
           'password': password,
           if (name != null && name.trim().isNotEmpty) 'name': name.trim(),
+          'role': role.trim().toLowerCase(),
         }),
       ).timeout(const Duration(seconds: 10));
 
@@ -118,7 +145,6 @@ class ApiService {
     try {
       final response = await http.post(
         Uri.parse('$baseUrl/login'),
-
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'email': email.trim(),
@@ -148,6 +174,88 @@ class ApiService {
         'error': 'Connection error: Unable to reach the backend server ($e)',
       };
     }
+  }
+
+  /// Upgrade user to Premium
+  Future<Map<String, dynamic>> upgradeToPremium(int userId) async {
+    try {
+      final response = await http.post(
+        Uri.parse('$baseUrl/upgrade-premium'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'user_id': userId}),
+      ).timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        currentUser = UserSession.fromJson(data);
+        return {
+          'success': true,
+          'user': currentUser,
+          'message': 'Upgraded to Premium successfully!',
+        };
+      } else {
+        return {
+          'success': false,
+          'error': data['detail'] ?? 'Upgrade failed',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'error': 'Error upgrading user: $e',
+      };
+    }
+  }
+
+  /// Update user role (Admin / Manager)
+  Future<Map<String, dynamic>> updateUserRole(int userId, String newRole) async {
+    try {
+      final response = await http.patch(
+        Uri.parse('$baseUrl/users/$userId/role'),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'role': newRole}),
+      ).timeout(const Duration(seconds: 10));
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        if (currentUser?.id == userId) {
+          currentUser = UserSession.fromJson(data);
+        }
+        return {
+          'success': true,
+          'user': UserSession.fromJson(data),
+          'message': 'Role updated to $newRole',
+        };
+      } else {
+        return {
+          'success': false,
+          'error': data['detail'] ?? 'Update failed',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'error': 'Error updating role: $e',
+      };
+    }
+  }
+
+  /// Fetch all users (for Admin dashboard)
+  Future<List<UserSession>> fetchUsers() async {
+    try {
+      final response = await http
+          .get(Uri.parse('$baseUrl/users'))
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode == 200) {
+        final List list = jsonDecode(response.body);
+        return list.map((item) => UserSession.fromJson(item)).toList();
+      }
+    } catch (e) {
+      debugPrint('Error fetching users: $e');
+    }
+    return [];
   }
 
   /// Logout current user

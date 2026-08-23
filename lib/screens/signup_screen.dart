@@ -17,6 +17,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _isLoading = false;
+  String _selectedRole = 'user'; // 'user', 'premium', 'coach', 'admin'
+
+  final List<Map<String, String>> _roles = [
+    {'id': 'user', 'label': '🏃 Member'},
+    {'id': 'premium', 'label': '⭐ Premium'},
+    {'id': 'coach', 'label': '🏋️ Coach'},
+    {'id': 'admin', 'label': '👑 Admin'},
+  ];
 
   @override
   void dispose() {
@@ -69,6 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       email: email,
       password: password,
       name: name.isNotEmpty ? name : null,
+      role: _selectedRole,
     );
 
     if (!mounted) return;
@@ -128,33 +137,64 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       color: Colors.grey,
                     ),
               ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 32),
               _buildTextField(
                 controller: _nameController,
                 label: "Full Name",
                 icon: Icons.person,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               _buildTextField(
                 controller: _emailController,
                 label: "Email",
                 icon: Icons.email,
                 keyboardType: TextInputType.emailAddress,
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               _buildTextField(
                 controller: _passwordController,
                 label: "Password",
                 icon: Icons.lock,
                 isPassword: true,
               ),
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
+              Text(
+                "Select Role",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: _roles.map((role) {
+                  final isSelected = _selectedRole == role['id'];
+                  return ChoiceChip(
+                    label: Text(role['label']!),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() {
+                          _selectedRole = role['id']!;
+                        });
+                      }
+                    },
+                    selectedColor: Theme.of(context).colorScheme.primary,
+                    labelStyle: TextStyle(
+                      color: isSelected ? Colors.black : Colors.white70,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.surface,
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 32),
               _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : CustomButton(
                       text: "Sign Up",
                       onPressed: _handleSignUp,
                     ),
+              const SizedBox(height: 24),
             ],
           ),
         ),

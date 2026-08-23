@@ -28,5 +28,36 @@ void main() {
     expect(ApiService.instance.baseUrl, isNotEmpty);
     ApiService.instance.logout();
     expect(ApiService.instance.currentUser, isNull);
+
+    final user = UserSession.fromJson({
+      'id': 1,
+      'email': 'admin@fitpulse.com',
+      'name': 'Admin User',
+      'role': 'admin',
+    });
+
+    expect(user.isAdmin, isTrue);
+    expect(user.isPremium, isFalse);
+    expect(user.isCoach, isFalse);
+    expect(user.roleTitle, equals('Admin'));
+
+    final coach = UserSession.fromJson({
+      'id': 2,
+      'email': 'coach@fitpulse.com',
+      'name': 'Coach Sam',
+      'role': 'coach',
+    });
+
+    expect(coach.isCoach, isTrue);
+    expect(coach.roleTitle, equals('Coach'));
+
+    final premium = UserSession.fromJson({
+      'id': 3,
+      'email': 'vip@fitpulse.com',
+      'role': 'premium',
+    });
+
+    expect(premium.isPremium, isTrue);
+    expect(premium.roleTitle, equals('Premium Member'));
   });
 }

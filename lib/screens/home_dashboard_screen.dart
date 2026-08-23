@@ -44,6 +44,14 @@ class HomeDashboardScreen extends StatelessWidget {
     final displayName = currentUser?.name?.isNotEmpty == true
         ? currentUser!.name!
         : (currentUser != null ? currentUser.email.split('@')[0] : "Alex Morgan");
+    final roleTitle = currentUser?.roleTitle ?? "Member";
+
+    Color getBadgeColor() {
+      if (currentUser?.isAdmin == true) return Colors.deepOrange;
+      if (currentUser?.isCoach == true) return Colors.cyan;
+      if (currentUser?.isPremium == true) return Colors.amber;
+      return AppTheme.primary;
+    }
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -51,11 +59,32 @@ class HomeDashboardScreen extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Good Morning,",
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: Colors.grey,
-              ),
+            Row(
+              children: [
+                Text(
+                  "Good Morning,",
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: Colors.grey,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: getBadgeColor().withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: getBadgeColor().withOpacity(0.5), width: 0.8),
+                  ),
+                  child: Text(
+                    roleTitle,
+                    style: TextStyle(
+                      color: getBadgeColor(),
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ],
             ),
             Text(
               displayName,
