@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_theme.dart';
+import '../services/api_service.dart';
 import '../widgets/custom_button.dart';
 import 'signup_screen.dart';
-import 'main_tab_screen.dart'; // Assume this will be created
+import 'main_tab_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +16,64 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleLogin() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter both email and password"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final result = await ApiService.instance.login(
+      email: email,
+      password: password,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (result['success'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message'] ?? 'Login successful!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const MainTabScreen()),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['error'] ?? 'Login failed'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,6 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 controller: _emailController,
                 label: "Email",
                 icon: Icons.email,
+                keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 20),
               _buildTextField(
@@ -63,15 +122,12 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 32),
-              CustomButton(
-                text: "Login",
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const MainTabScreen()),
-                  );
-                },
-              ),
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : CustomButton(
+                      text: "Login",
+                      onPressed: _handleLogin,
+                    ),
               const SizedBox(height: 24),
               Row(
                 children: [
@@ -88,7 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 text: "Continue with Google",
                 onPressed: () {},
                 isPrimary: false,
-                icon: const Icon(Icons.language), // Placeholder for Google icon
+                icon: const Icon(Icons.language),
               ),
               const SizedBox(height: 32),
               Row(
@@ -118,10 +174,12 @@ class _LoginScreenState extends State<LoginScreen> {
     required String label,
     required IconData icon,
     bool isPassword = false,
+    TextInputType? keyboardType,
   }) {
     return TextField(
       controller: controller,
       obscureText: isPassword && _obscurePassword,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: Colors.grey),
@@ -148,3 +206,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

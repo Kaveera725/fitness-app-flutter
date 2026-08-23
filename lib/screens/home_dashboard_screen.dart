@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/stat_card.dart';
 import '../widgets/progress_ring.dart';
@@ -39,6 +40,11 @@ class HomeDashboardScreen extends StatelessWidget {
   }
 
   Widget _buildHeader(ThemeData theme) {
+    final currentUser = ApiService.instance.currentUser;
+    final displayName = currentUser?.name?.isNotEmpty == true
+        ? currentUser!.name!
+        : (currentUser != null ? currentUser.email.split('@')[0] : "Alex Morgan");
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -52,7 +58,7 @@ class HomeDashboardScreen extends StatelessWidget {
               ),
             ),
             Text(
-              "Alex Morgan",
+              displayName,
               style: theme.textTheme.displaySmall,
             ),
           ],

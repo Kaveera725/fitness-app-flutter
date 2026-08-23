@@ -1,30 +1,32 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:fitness/main.dart';
+import 'package:fitness/widgets/custom_button.dart';
+import 'package:fitness/services/api_service.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('CustomButton renders text and triggers callback', (WidgetTester tester) async {
+    bool tapped = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: CustomButton(
+            text: 'Sign In',
+            onPressed: () {
+              tapped = true;
+            },
+          ),
+        ),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    expect(find.text('Sign In'), findsOneWidget);
+    await tester.tap(find.byType(CustomButton));
+    expect(tapped, isTrue);
+  });
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+  test('ApiService defaultBaseUrl and session test', () {
+    expect(ApiService.instance.baseUrl, isNotEmpty);
+    ApiService.instance.logout();
+    expect(ApiService.instance.currentUser, isNull);
   });
 }

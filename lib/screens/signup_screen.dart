@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../theme/app_theme.dart';
+import '../services/api_service.dart';
 import '../widgets/custom_button.dart';
 import 'main_tab_screen.dart';
 
@@ -16,6 +16,88 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleSignUp() async {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please fill in email and password"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    if (!email.contains('@') || !email.contains('.')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Please enter a valid email address"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    if (password.length < 6) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Password must be at least 6 characters long"),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    final result = await ApiService.instance.signup(
+      email: email,
+      password: password,
+      name: name.isNotEmpty ? name : null,
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (result['success'] == true) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['message'] ?? 'Account created successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(builder: (_) => const MainTabScreen()),
+        (route) => false,
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(result['error'] ?? 'Sign up failed'),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -57,6 +139,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 controller: _emailController,
                 label: "Email",
                 icon: Icons.email,
+                keyboardType: TextInputType.emailAddress,
               ),
               const SizedBox(height: 20),
               _buildTextField(
@@ -66,16 +149,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 isPassword: true,
               ),
               const SizedBox(height: 40),
-              CustomButton(
-                text: "Sign Up",
-                onPressed: () {
-                  Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (_) => const MainTabScreen()),
-                    (route) => false,
-                  );
-                },
-              ),
+              _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : CustomButton(
+                      text: "Sign Up",
+                      onPressed: _handleSignUp,
+                    ),
             ],
           ),
         ),
@@ -88,10 +167,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     required String label,
     required IconData icon,
     bool isPassword = false,
+    TextInputType? keyboardType,
   }) {
     return TextField(
       controller: controller,
       obscureText: isPassword && _obscurePassword,
+      keyboardType: keyboardType,
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon, color: Colors.grey),
@@ -118,3 +199,4 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
+

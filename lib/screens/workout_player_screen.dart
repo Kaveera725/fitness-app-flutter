@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_animate/flutter_animate.dart';
 import '../widgets/progress_ring.dart';
-import '../widgets/custom_button.dart';
 import 'workout_summary_screen.dart';
+
 
 class WorkoutPlayerScreen extends StatefulWidget {
   final String title;

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_button.dart';
 import 'login_screen.dart';
@@ -10,6 +11,11 @@ class ProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final currentUser = ApiService.instance.currentUser;
+    final displayName = currentUser?.name?.isNotEmpty == true
+        ? currentUser!.name!
+        : (currentUser != null ? currentUser.email.split('@')[0] : "Alex Morgan");
+    final displayEmail = currentUser?.email ?? "alex.morgan@example.com";
 
     return Scaffold(
       appBar: AppBar(
@@ -37,9 +43,10 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            Text("Alex Morgan", style: theme.textTheme.displaySmall),
+            Text(displayName, style: theme.textTheme.displaySmall),
             const SizedBox(height: 4),
-            Text("alex.morgan@example.com", style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey)),
+            Text(displayEmail, style: theme.textTheme.bodyLarge?.copyWith(color: Colors.grey)),
+
             const SizedBox(height: 32),
             _buildPremiumBanner(theme),
             const SizedBox(height: 32),
@@ -103,6 +110,7 @@ class ProfileScreen extends StatelessWidget {
           text: "Logout",
           isPrimary: false,
           onPressed: () {
+            ApiService.instance.logout();
             Navigator.pushAndRemoveUntil(
               context,
               MaterialPageRoute(builder: (_) => const LoginScreen()),
