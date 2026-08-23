@@ -1,17 +1,31 @@
-# fitness
+# 🏋️ FitPulse Fitness Application
 
-A new Flutter project.
+A full-stack fitness tracking application built with **Flutter**, **FastAPI**, and **PostgreSQL**.
 
-## Getting Started
+## 📖 Running Instructions
+For complete setup, database initialization, and execution instructions, please see:
+👉 **[RUNNING_INSTRUCTIONS.md](file:///c:/Users/anush/OneDrive/Desktop/flutter/fitness/RUNNING_INSTRUCTIONS.md)**
 
-This project is a starting point for a Flutter application.
+## 🚀 Quick Run Summary
 
-A few resources to get you started if this is your first Flutter project:
+### 1. Database
+Ensure PostgreSQL is running with database `fitness_db` and user `fitness_user`.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+### 2. Backend (FastAPI)
+```bash
+cd backend
+..\.venv\Scripts\Activate.ps1
+uvicorn main:app --reload --host 127.0.0.1 --port 8000
+```
+- API Documentation: `http://127.0.0.1:8000/docs`
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 3. Frontend (Flutter)
+```bash
+flutter pub get
+flutter run -d chrome
+```
+
+### 🔑 Pre-Configured Admin Account
+- **Email:** `admin@gmail.com`
+- **Password:** `admin123`
+- **Role:** Admin
