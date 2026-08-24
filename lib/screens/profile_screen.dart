@@ -4,6 +4,7 @@ import '../services/api_service.dart';
 import '../theme/app_theme.dart';
 import '../widgets/custom_button.dart';
 import 'login_screen.dart';
+import 'admin/admin_home_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -466,14 +467,27 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget _buildSettingsList(ThemeData theme, BuildContext context, UserSession? currentUser) {
     return Column(
       children: [
-        if (currentUser?.isAdmin == true)
+        if (currentUser?.isAdmin == true) ...[
+          _buildListTile(
+            Icons.dashboard_customize_rounded,
+            "Admin Dashboard Console",
+            theme,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AdminHomeScreen()),
+              );
+            },
+            highlightColor: AppTheme.primary,
+          ),
           _buildListTile(
             Icons.manage_accounts,
-            "Manage All Users (Admin)",
+            "Manage All Users (Quick Modal)",
             theme,
             onTap: _showAdminUsersDialog,
             highlightColor: Colors.deepOrange,
           ),
+        ],
         if (currentUser?.isCoach == true)
           _buildListTile(
             Icons.assignment,
