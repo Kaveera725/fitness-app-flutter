@@ -4,6 +4,7 @@ import '../services/api_service.dart';
 import '../widgets/custom_button.dart';
 import 'signup_screen.dart';
 import 'main_tab_screen.dart';
+import 'admin/admin_login_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -161,6 +162,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: const Text("Sign Up"),
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+              Center(
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const AdminLoginScreen()),
+                    );
+                  },
+                  icon: const Icon(Icons.admin_panel_settings_outlined,
+                      size: 18, color: Color(0xFF5E35B1)),
+                  label: const Text(
+                    "Admin Portal Login",
+                    style: TextStyle(
+                      color: Color(0xFF5E35B1),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
