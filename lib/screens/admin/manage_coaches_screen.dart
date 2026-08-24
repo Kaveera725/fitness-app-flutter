@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/status_badge.dart';
+import '../coach/coach_invite_acceptance_screen.dart';
 import 'admin_data.dart';
 
 class ManageCoachesScreen extends StatefulWidget {
@@ -286,12 +287,29 @@ class _ManageCoachesScreenState extends State<ManageCoachesScreen> {
                                         const SizedBox(width: 12),
                                         Expanded(
                                           child: Text(
-                                            'Invite sent to $email successfully!',
+                                            'Invite sent to $email!',
                                             style: GoogleFonts.manrope(
                                                 fontWeight: FontWeight.w600),
                                           ),
                                         ),
                                       ],
+                                    ),
+                                    action: SnackBarAction(
+                                      label: 'Open Invite Link',
+                                      textColor: Colors.white,
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) =>
+                                                CoachInviteAcceptanceScreen(
+                                              invitedEmail: email,
+                                              initialName: name,
+                                              initialSpecialty: specialty,
+                                            ),
+                                          ),
+                                        );
+                                      },
                                     ),
                                     backgroundColor: const Color(0xFF00C853),
                                     behavior: SnackBarBehavior.floating,
@@ -712,25 +730,61 @@ class _ManageCoachesScreenState extends State<ManageCoachesScreen> {
                   ],
                 ),
 
-                // Remove Coach Button
-                TextButton.icon(
-                  onPressed: () => _confirmRemoveCoach(coach),
-                  icon: const Icon(Icons.delete_outline_rounded,
-                      size: 16, color: Colors.redAccent),
-                  label: Text(
-                    'Remove',
-                    style: GoogleFonts.manrope(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.redAccent,
+                Row(
+                  children: [
+                    if (!isActive) ...[
+                      TextButton.icon(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => CoachInviteAcceptanceScreen(
+                                invitedEmail: coach.email,
+                                initialName: coach.name,
+                                initialSpecialty: coach.specialty,
+                              ),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.link_rounded,
+                            size: 16, color: AppTheme.accentOrange),
+                        label: Text(
+                          'Open Invite',
+                          style: GoogleFonts.manrope(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.accentOrange,
+                          ),
+                        ),
+                        style: TextButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 4),
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                    ],
+                    TextButton.icon(
+                      onPressed: () => _confirmRemoveCoach(coach),
+                      icon: const Icon(Icons.delete_outline_rounded,
+                          size: 16, color: Colors.redAccent),
+                      label: Text(
+                        'Remove',
+                        style: GoogleFonts.manrope(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
                     ),
-                  ),
-                  style: TextButton.styleFrom(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
+                  ],
                 ),
               ],
             ),
