@@ -6,6 +6,7 @@ import 'workout_library_screen.dart';
 import 'progress_screen.dart';
 import 'community_screen.dart';
 import 'profile_screen.dart';
+import 'coaches/find_coach_screen.dart';
 
 class MainTabScreen extends StatefulWidget {
   const MainTabScreen({super.key});
@@ -22,6 +23,7 @@ class _MainTabScreenState extends State<MainTabScreen> {
     const WorkoutLibraryScreen(), // To be built in Phase 4
     const ProgressScreen(),       // To be built in Phase 5
     const CommunityScreen(),      // Placeholder
+    const FindCoachScreen(),
     const ProfileScreen(),        // To be built in Phase 5
   ];
 
@@ -53,6 +55,10 @@ class _MainTabScreenState extends State<MainTabScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.people),
             label: 'Community',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.school),
+            label: 'Coaches',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
