@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/api_service.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/google_sign_in_button.dart';
 import 'signup_screen.dart';
 import 'main_tab_screen.dart';
 import 'admin/admin_login_screen.dart';
@@ -141,11 +142,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 ],
               ),
               const SizedBox(height: 24),
-              CustomButton(
-                text: "Continue with Google",
-                onPressed: () {},
-                isPrimary: false,
-                icon: const Icon(Icons.language),
+              GoogleSignInButton(
+                onSuccess: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MainTabScreen()),
+                  );
+                },
               ),
               const SizedBox(height: 32),
               Row(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../services/api_service.dart';
 import '../widgets/custom_button.dart';
+import '../widgets/google_sign_in_button.dart';
 import 'main_tab_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -194,6 +195,27 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       text: "Sign Up",
                       onPressed: _handleSignUp,
                     ),
+              const SizedBox(height: 20),
+              Row(
+                children: [
+                  const Expanded(child: Divider()),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text("OR", style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.grey)),
+                  ),
+                  const Expanded(child: Divider()),
+                ],
+              ),
+              const SizedBox(height: 20),
+              GoogleSignInButton(
+                text: "Sign up with Google",
+                onSuccess: () {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (_) => const MainTabScreen()),
+                  );
+                },
+              ),
               const SizedBox(height: 24),
             ],
           ),
