@@ -35,6 +35,7 @@ GRANT ALL ON SCHEMA public TO fitness_user;
 
 ---
 
+
 ## 🚀 2. Backend Setup (FastAPI)
 
 1. Open a terminal and navigate to the `backend` directory:
