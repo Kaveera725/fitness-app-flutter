@@ -32,7 +32,6 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
   final _heightController = TextEditingController();
   final _weightController = TextEditingController();
 
@@ -72,7 +71,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final user = ApiService.instance.currentUser;
 
     _nameController.text = user?.name ?? 'Alex Henderson';
-    _emailController.text = user?.email ?? 'alex.henderson@fitpulse.com';
     _heightController.text = '180 cm';
     _weightController.text = '76 kg';
 
@@ -83,7 +81,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
     _heightController.dispose();
     _weightController.dispose();
     super.dispose();
@@ -308,59 +305,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  /// Delete Account confirmation warning dialog
-  void _showDeleteAccountDialog() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        title: Row(
-          children: [
-            const Icon(Icons.warning_amber_rounded,
-                color: Colors.redAccent, size: 24),
-            const SizedBox(width: 8),
-            Text('Delete Account',
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w700, color: Colors.redAccent)),
-          ],
-        ),
-        content: Text(
-          'This action is irreversible. All your workout history, progress stats, and coach messages will be permanently deleted.',
-          style: GoogleFonts.manrope(fontSize: 13, height: 1.5),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text('Keep Account',
-                style: GoogleFonts.manrope(color: Colors.grey)),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              ApiService.instance.logout();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text('Account successfully deleted.'),
-                  backgroundColor: Colors.redAccent,
-                ),
-              );
-              Navigator.of(context).pushAndRemoveUntil(
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
-                (route) => false,
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.redAccent,
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
-            ),
-            child: const Text('Permanently Delete'),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -483,20 +427,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
             const SizedBox(height: 12),
 
-            // User Name & Email Subtitle
+            // User Name
             Text(
               _nameController.text,
               style: GoogleFonts.poppins(
                 fontSize: 19,
                 fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              _emailController.text,
-              style: GoogleFonts.manrope(
-                fontSize: 13,
-                color: Colors.grey.shade600,
               ),
             ),
 
@@ -726,19 +662,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(height: 14),
 
-            // Email field (read-only if Google account)
-            CustomTextField(
-              label: 'Email Address',
-              hint: 'Enter your email',
-              controller: _emailController,
-              prefixIcon: Icons.email_outlined,
-              readOnly: widget.isGoogleUser,
-              helperText: widget.isGoogleUser
-                  ? '🔒 Managed by your Google account (read-only)'
-                  : null,
-            ),
-            const SizedBox(height: 14),
-
             // Height and Weight in a 2-column Row
             Row(
               children: [
@@ -858,18 +781,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 12),
 
             // Settings Card List
-            Container(
-              decoration: BoxDecoration(
-                color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-                borderRadius: BorderRadius.circular(18),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.03),
-                    blurRadius: 8,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
+            Material(
+              color: isDark ? const Color(0xFF1E1E1E) : Colors.white,
+              borderRadius: BorderRadius.circular(18),
+              elevation: 1,
+              shadowColor: Colors.black.withOpacity(0.04),
+              clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
                   // Notifications Switch Tile
@@ -974,26 +891,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-
-            const SizedBox(height: 20),
-
-            // Delete Account Button (Less prominent, red text)
-            Center(
-              child: TextButton.icon(
-                onPressed: _showDeleteAccountDialog,
-                icon: const Icon(Icons.delete_forever_outlined,
-                    size: 16, color: Colors.red),
-                label: Text(
-                  'Delete Account',
-                  style: GoogleFonts.manrope(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.red.shade400,
-                  ),
-                ),
-              ),
-            ),
-
             const SizedBox(height: 32),
           ],
         ),
