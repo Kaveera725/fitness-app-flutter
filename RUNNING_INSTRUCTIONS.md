@@ -104,9 +104,15 @@ GRANT ALL ON SCHEMA public TO fitness_user;
 | Role | Email | Password | Permissions & Features |
 | :--- | :--- | :--- | :--- |
 | 👑 **Admin** | `admin@gmail.com` | `admin123` | Full access, Admin Control Center, View and change roles of all registered users |
-| 🏋️ **Coach** | *Select during Sign Up* | *Your password* | Coach Workspace, Trainee Routines & workout management |
-| ⭐ **Premium** | *Select during Sign Up / Upgrade in Profile* | *Your password* | Unlimited workout access, premium badges |
-| 🏃 **Member** | *Default on Sign Up* | *Your password* | Standard fitness workouts, one-click upgrade to Premium |
+| 🏋️ **Coach** | `coach@gmail.com` | `coach123` | Coach Workspace, Trainee Routines & workout management |
+| ⭐ **Premium** | `premium@gmail.com` | `premium123` | Unlimited workout access, premium badges |
+| 🏃 **Member** | `member@gmail.com` | `member123` | Standard fitness workouts, one-click upgrade to Premium |
+
+> **Tip:** You can re-seed or reset these test accounts at any time by running:
+> ```bash
+> cd backend
+> python seed_users.py
+> ```
 
 ---
 
