@@ -20,19 +20,19 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 
 DEV_USERS = [
     {
-        "name": "Coach",
+        "name": "Marcus Vance",
         "email": "coach@gmail.com",
         "password": "coach123",
         "role": "coach"
     },
     {
-        "name": "Premium Member",
+        "name": "Sarah Connor",
         "email": "premium@gmail.com",
         "password": "premium123",
         "role": "premium"
     },
     {
-        "name": "Member",
+        "name": "Alex Rivera",
         "email": "member@gmail.com",
         "password": "member123",
         "role": "user"
