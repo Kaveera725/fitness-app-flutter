@@ -14,6 +14,7 @@ class StatCard extends StatelessWidget {
   final bool trendPositive;
   final String? subtitle;
   final VoidCallback? onTap;
+  final Color? progressColor;
 
   const StatCard({
     super.key,
@@ -27,6 +28,7 @@ class StatCard extends StatelessWidget {
     this.trendPositive = true,
     this.subtitle,
     this.onTap,
+    this.progressColor,
   });
 
   @override
@@ -137,7 +139,7 @@ class StatCard extends StatelessWidget {
                   value: progress!.clamp(0.0, 1.0),
                   minHeight: 4,
                   backgroundColor: const Color(0xFF252A25), // Dark track
-                  valueColor: AlwaysStoppedAnimation<Color>(color),
+                  valueColor: AlwaysStoppedAnimation<Color>(progressColor ?? color),
                 ),
               ),
               if (target != null) ...[
