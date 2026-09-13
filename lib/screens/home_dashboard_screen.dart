@@ -71,7 +71,6 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
       }
       return emailPrefix[0].toUpperCase() + emailPrefix.substring(1);
     }
-    // Return first name cleanly
     return rawName.split(' ').first;
   }
 
@@ -85,21 +84,32 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     final isMember = !isPremium && !isCoach && !isAdmin;
 
     return Scaffold(
+      backgroundColor: AppTheme.backgroundDark,
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Fix 1: Real user greeting with role badge pill
+              // 1. Greeting header with bold white name and MEMBER badge
               _buildHeader(theme, currentUser, isPremium, isCoach, isAdmin),
               const SizedBox(height: 18),
 
-              // Daily Goal Ring Card
-              _buildTodayProgress(theme, isPremium),
+              // 2. Daily Goal Card (dark card with glowing neon green ring and white numbers)
+              _buildTodayProgress(theme, isPremium)
+                  .animate()
+                  .fadeIn(duration: 400.ms)
+                  .slideY(begin: 0.05, end: 0, duration: 400.ms),
               const SizedBox(height: 16),
 
-              // Premium / Member Contextual Status & Upgrade Callout
+              // 3. New Challenge Streak Banner: "2 Weeks of Energy" with neon START button
+              _buildChallengeBanner(context)
+                  .animate()
+                  .fadeIn(delay: 100.ms, duration: 400.ms)
+                  .slideY(begin: 0.05, end: 0, duration: 400.ms),
+              const SizedBox(height: 16),
+
+              // Contextual Member / Pro Perks
               if (isMember) ...[
                 _buildMemberUpgradeBanner(context),
                 const SizedBox(height: 16),
@@ -108,26 +118,35 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 const SizedBox(height: 16),
               ],
 
-              // Fix 2 & Fix 4: Combined compact 3-metric row with trends and progress
-              _buildQuickMetricsRow(theme),
+              // 4. Quick Metrics Row (Distinct icon colors, neon green progress bars)
+              _buildQuickMetricsRow(theme)
+                  .animate()
+                  .fadeIn(delay: 150.ms, duration: 400.ms)
+                  .slideY(begin: 0.05, end: 0, duration: 400.ms),
               const SizedBox(height: 20),
 
-              // Fix 3: Dynamic meaningful weekly activity chart
-              _buildWeeklyActivity(theme),
+              // 5. Meaningful Weekly Activity Chart with glowing neon today rod
+              _buildWeeklyActivity(theme)
+                  .animate()
+                  .fadeIn(delay: 200.ms, duration: 400.ms)
+                  .slideY(begin: 0.05, end: 0, duration: 400.ms),
               const SizedBox(height: 20),
 
-              // Fix 5: Personalized Today's Picks
-              _buildTodayWorkout(context, theme, isPremium),
+              // 6. Today's Plan Workout Section with full-bleed cards and neon pills
+              _buildTodayWorkout(context, theme, isPremium)
+                  .animate()
+                  .fadeIn(delay: 250.ms, duration: 400.ms)
+                  .slideY(begin: 0.05, end: 0, duration: 400.ms),
               const SizedBox(height: 24),
             ],
-          ).animate().fade().slideY(begin: 0.05, end: 0, duration: 350.ms),
+          ),
         ),
       ),
     );
   }
 
   // ==========================================
-  // FIX 1: Real User Header & Role Badge
+  // 1. Header: Greeting & Role Badge
   // ==========================================
   Widget _buildHeader(
     ThemeData theme,
@@ -137,29 +156,24 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     bool isAdmin,
   ) {
     final displayName = _getGreetingName(currentUser);
-    final roleTitle = currentUser?.roleTitle ?? "Member";
 
-    Color badgeColor;
-    IconData badgeIcon;
+    Color badgeColor = AppTheme.primary;
+    IconData badgeIcon = Icons.person_rounded;
+    String pillLabel = "MEMBER";
+
     if (isAdmin) {
       badgeColor = Colors.deepOrange;
       badgeIcon = Icons.shield_rounded;
+      pillLabel = "ADMIN";
     } else if (isCoach) {
       badgeColor = Colors.cyan;
       badgeIcon = Icons.sports_rounded;
+      pillLabel = "COACH";
     } else if (isPremium) {
-      badgeColor = const Color(0xFFFFB300);
+      badgeColor = AppTheme.accentPurple;
       badgeIcon = Icons.star_rounded;
-    } else {
-      badgeColor = AppTheme.primary;
-      badgeIcon = Icons.person_rounded;
+      pillLabel = "PREMIUM";
     }
-
-    final pillLabel = isPremium
-        ? "PREMIUM"
-        : (isCoach
-            ? "COACH"
-            : (isAdmin ? "ADMIN" : "MEMBER"));
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -171,20 +185,21 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               children: [
                 Text(
                   "Good Morning,",
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: Colors.grey.shade600,
+                  style: GoogleFonts.manrope(
+                    color: AppTheme.textSecondary,
+                    fontSize: 14,
                     fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Small Role Badge Pill
+                // Dark pill with neon green text/icon for MEMBER
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
-                    color: badgeColor.withOpacity(0.12),
+                    color: badgeColor.withValues(alpha: 0.14),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: badgeColor.withOpacity(0.4),
+                      color: badgeColor.withValues(alpha: 0.4),
                       width: 1,
                     ),
                   ),
@@ -199,7 +214,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                           color: badgeColor,
                           fontSize: 10,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: 0.3,
+                          letterSpacing: 0.4,
                         ),
                       ),
                     ],
@@ -207,54 +222,42 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 2),
+            const SizedBox(height: 3),
             Text(
               displayName,
               style: GoogleFonts.poppins(
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
-                color: theme.colorScheme.onSurface,
+                color: AppTheme.textDark, // Bold white/off-white
                 letterSpacing: -0.5,
               ),
             ),
           ],
         ),
 
-        // Profile Avatar (Gold ring for Premium)
+        // Profile Avatar
         Container(
-          padding: EdgeInsets.all(isPremium ? 2.5 : 0),
+          padding: EdgeInsets.all(isPremium ? 2.5 : 2),
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            gradient: isPremium
-                ? const LinearGradient(
-                    colors: [Color(0xFFFFD54F), Color(0xFFFF8F00), Color(0xFF7C4DFF)],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : null,
-            boxShadow: isPremium
-                ? [
-                    BoxShadow(
-                      color: Colors.amber.withOpacity(0.35),
-                      blurRadius: 10,
-                      offset: const Offset(0, 3),
-                    )
-                  ]
-                : null,
+            border: Border.all(
+              color: isPremium ? AppTheme.accentPurple : AppTheme.surfaceBorder,
+              width: 1.5,
+            ),
           ),
           child: ClipOval(
             child: Container(
-              width: 52,
-              height: 52,
-              color: theme.colorScheme.primary.withOpacity(0.2),
+              width: 50,
+              height: 50,
+              color: const Color(0xFF1E221E),
               child: Image.network(
                 "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&q=80",
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
-                  return Icon(
+                  return const Icon(
                     Icons.person,
-                    color: theme.colorScheme.primary,
-                    size: 28,
+                    color: AppTheme.primary,
+                    size: 26,
                   );
                 },
               ),
@@ -266,25 +269,23 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   }
 
   // ==========================================
-  // Daily Goal Card
+  // 2. Daily Goal Card (Dark Card with Glowing Neon Progress Ring)
   // ==========================================
   Widget _buildTodayProgress(ThemeData theme, bool isPremium) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: isPremium
-              ? [const Color(0xFF4A148C), const Color(0xFF6A1B9A), const Color(0xFF7B1FA2)]
-              : [AppTheme.primaryDark, AppTheme.primary, const Color(0xFF7E57C2)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        color: AppTheme.surfaceDark,
         borderRadius: BorderRadius.circular(22),
+        border: Border.all(
+          color: AppTheme.surfaceBorder,
+          width: 1,
+        ),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.primary.withOpacity(0.32),
-            blurRadius: 16,
-            offset: const Offset(0, 8),
+            color: AppTheme.primary.withValues(alpha: 0.05),
+            blurRadius: 18,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -298,22 +299,26 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.18),
-                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFF222622),
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: AppTheme.surfaceBorder,
+                          width: 1,
+                        ),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.local_fire_department_rounded, size: 13, color: Colors.amber),
+                          const Icon(Icons.bolt_rounded, size: 13, color: AppTheme.primary),
                           const SizedBox(width: 4),
                           Text(
                             isPremium ? "PRO DAILY GOAL" : "DAILY GOAL",
                             style: GoogleFonts.manrope(
-                              color: Colors.white,
+                              color: AppTheme.textDark,
                               fontSize: 10,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w800,
                               letterSpacing: 0.5,
                             ),
                           ),
@@ -322,23 +327,38 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                     ),
                     const SizedBox(width: 8),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppTheme.accentGreen.withOpacity(0.2),
+                        color: AppTheme.primary.withValues(alpha: 0.12),
                         borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        "🔥 5-Day Streak",
-                        style: GoogleFonts.manrope(
-                          color: AppTheme.accentGreen,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w700,
+                        border: Border.all(
+                          color: AppTheme.primary.withValues(alpha: 0.35),
+                          width: 1,
                         ),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.local_fire_department_rounded,
+                            size: 13,
+                            color: AppTheme.primary,
+                          ),
+                          const SizedBox(width: 3),
+                          Text(
+                            "5-Day Streak",
+                            style: GoogleFonts.manrope(
+                              color: AppTheme.primary,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w800,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 14),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.baseline,
                   textBaseline: TextBaseline.alphabetic,
@@ -346,9 +366,10 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                     Text(
                       "1,250",
                       style: GoogleFonts.poppins(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.textDark, // Large bold white numbers
+                        letterSpacing: -0.5,
                         height: 1.0,
                       ),
                     ),
@@ -358,46 +379,177 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                       style: GoogleFonts.manrope(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,
-                        color: Colors.white.withOpacity(0.8),
+                        color: AppTheme.textSecondary,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 6),
                 Text(
                   "750 kcal remaining to reach target",
                   style: GoogleFonts.manrope(
                     fontSize: 11,
-                    color: Colors.white.withOpacity(0.75),
+                    fontWeight: FontWeight.w500,
+                    color: AppTheme.textSecondary,
                   ),
                 ),
               ],
             ),
           ),
+          const SizedBox(width: 14),
           ProgressRing(
             progress: 0.625,
-            color: AppTheme.accentGreen,
-            size: 88,
+            color: AppTheme.primary,
+            size: 92,
             strokeWidth: 9,
             centerContent: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(
-                  Icons.bolt_rounded,
-                  color: AppTheme.accentGreen,
-                  size: 24,
+                  Icons.local_fire_department_rounded,
+                  color: AppTheme.primary,
+                  size: 22,
                 ),
+                const SizedBox(height: 2),
                 Text(
                   "63%",
                   style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontSize: 11,
-                    fontWeight: FontWeight.bold,
+                    color: AppTheme.textDark,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
               ],
             ),
-          ).animate().scale(delay: 150.ms, duration: 450.ms, curve: Curves.easeOutBack),
+          )
+              .animate()
+              .scale(delay: 150.ms, duration: 500.ms, curve: Curves.easeOutBack)
+              .fadeIn(duration: 400.ms),
+        ],
+      ),
+    );
+  }
+
+  // ==========================================
+  // 3. Horizontal Streak/Challenge Banner ("2 Weeks of Energy")
+  // ==========================================
+  Widget _buildChallengeBanner(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceDark,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppTheme.surfaceBorder, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.primary.withValues(alpha: 0.05),
+            blurRadius: 14,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          // Glowing Trophy/Streak Icon Circle
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppTheme.primary.withValues(alpha: 0.14),
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: AppTheme.primary.withValues(alpha: 0.4),
+                width: 1.2,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppTheme.primary.withValues(alpha: 0.25),
+                  blurRadius: 8,
+                ),
+              ],
+            ),
+            child: const Icon(
+              Icons.emoji_events_rounded,
+              color: AppTheme.primary,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 14),
+
+          // Challenge Details
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: AppTheme.primary.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Text(
+                        "NEW CHALLENGE",
+                        style: GoogleFonts.manrope(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.primary,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  "2 Weeks of Energy",
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.textDark,
+                  ),
+                ),
+                Text(
+                  "14 days • 10 workouts to complete",
+                  style: GoogleFonts.manrope(
+                    fontSize: 11,
+                    color: AppTheme.textSecondary,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+
+          // START Button in Neon Green
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const WorkoutLibraryScreen()),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.primary,
+              foregroundColor: const Color(0xFF0D0F0D),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              minimumSize: const Size(64, 38),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              elevation: 0,
+            ),
+            child: Text(
+              "START",
+              style: GoogleFonts.poppins(
+                fontSize: 12,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.5,
+                color: const Color(0xFF0D0F0D),
+              ),
+            ),
+          ),
         ],
       ),
     );
@@ -410,15 +562,10 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            const Color(0xFF7C4DFF).withOpacity(0.12),
-            const Color(0xFFFFB300).withOpacity(0.14),
-          ],
-        ),
+        color: AppTheme.surfaceDark,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFFFB300).withOpacity(0.35),
+          color: AppTheme.accentPurple.withValues(alpha: 0.4),
           width: 1,
         ),
       ),
@@ -427,10 +574,10 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: const Color(0xFFFFB300).withOpacity(0.2),
+              color: AppTheme.accentPurple.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.workspace_premium_rounded, color: Color(0xFFFFA000), size: 20),
+            child: const Icon(Icons.workspace_premium_rounded, color: AppTheme.accentPurple, size: 20),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -442,14 +589,14 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                   style: GoogleFonts.poppins(
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
-                    color: Theme.of(context).colorScheme.onSurface,
+                    color: AppTheme.textDark,
                   ),
                 ),
                 Text(
                   "Unlock 1-on-1 coach, custom diets & HD routines",
                   style: GoogleFonts.manrope(
                     fontSize: 11,
-                    color: Colors.grey.shade600,
+                    color: AppTheme.textSecondary,
                   ),
                 ),
               ],
@@ -463,10 +610,12 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF7C4DFF),
+              backgroundColor: AppTheme.accentPurple,
+              foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               minimumSize: const Size(64, 34),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              elevation: 0,
             ),
             child: Text(
               "Upgrade",
@@ -485,13 +634,13 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: const Color(0xFFFFB300).withOpacity(0.1),
+        color: AppTheme.surfaceDark,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFFFB300).withOpacity(0.4), width: 1),
+        border: Border.all(color: AppTheme.accentPurple.withValues(alpha: 0.4), width: 1),
       ),
       child: Row(
         children: [
-          const Icon(Icons.verified_rounded, color: Color(0xFFFFA000), size: 20),
+          const Icon(Icons.verified_rounded, color: AppTheme.accentPurple, size: 20),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -502,14 +651,14 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                   style: GoogleFonts.manrope(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: const Color(0xFFE65100),
+                    color: AppTheme.accentPurple,
                   ),
                 ),
                 Text(
                   "AI Recovery: 94% Optimal • Coach Marcus Vance assigned",
                   style: GoogleFonts.manrope(
                     fontSize: 11,
-                    color: Colors.grey.shade700,
+                    color: AppTheme.textSecondary,
                   ),
                 ),
               ],
@@ -548,12 +697,12 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   }
 
   // ==========================================
-  // FIX 2 & FIX 4: Compact 3-Metric Row
+  // 4. Quick Metrics Row (Distinct Icon Accents, Neon Green Progress)
   // ==========================================
   Widget _buildQuickMetricsRow(ThemeData theme) {
     return Row(
       children: const [
-        // Metric 1: Steps
+        // Metric 1: Steps (Orange icon accent, Neon green progress bar)
         Expanded(
           child: StatCard(
             title: "Steps",
@@ -563,12 +712,13 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             trend: "+12%",
             trendPositive: true,
             icon: Icons.directions_walk_rounded,
-            color: AppTheme.accentOrange,
+            color: Color(0xFFFF9100), // Distinct orange accent
+            progressColor: AppTheme.primary, // Neon green fill for consistency
           ),
         ),
         SizedBox(width: 10),
 
-        // Metric 2: Water
+        // Metric 2: Water (Blue icon accent, Neon green progress bar)
         Expanded(
           child: StatCard(
             title: "Water",
@@ -578,12 +728,13 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             trend: "+8%",
             trendPositive: true,
             icon: Icons.water_drop_rounded,
-            color: Color(0xFF00B0FF),
+            color: Color(0xFF00B0FF), // Distinct blue accent
+            progressColor: AppTheme.primary, // Neon green fill for consistency
           ),
         ),
         SizedBox(width: 10),
 
-        // Metric 3: Sleep
+        // Metric 3: Sleep (Purple icon accent, Neon green progress bar)
         Expanded(
           child: StatCard(
             title: "Sleep",
@@ -593,7 +744,8 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
             trend: "97%",
             trendPositive: true,
             icon: Icons.bedtime_rounded,
-            color: Color(0xFF7C4DFF),
+            color: Color(0xFF9D4EDD), // Distinct purple accent
+            progressColor: AppTheme.primary, // Neon green fill for consistency
           ),
         ),
       ],
@@ -601,7 +753,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   }
 
   // ==========================================
-  // FIX 3: Dynamic Meaningful Activity Chart
+  // 5. Meaningful Weekly Activity Chart
   // ==========================================
   Widget _buildWeeklyActivity(ThemeData theme) {
     final selectedDay = _weeklyActivity[_selectedDayIndex];
@@ -619,15 +771,17 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               children: [
                 Text(
                   "Activity",
-                  style: theme.textTheme.headlineMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+                  style: GoogleFonts.poppins(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.textDark,
                   ),
                 ),
                 Text(
                   "Weekly Total: 13,150 kcal • Avg: 1,878 kcal",
                   style: GoogleFonts.manrope(
                     fontSize: 11,
-                    color: Colors.grey.shade600,
+                    color: AppTheme.textSecondary,
                   ),
                 ),
               ],
@@ -638,13 +792,13 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: selectedDay.isWeekend
-                    ? Colors.teal.withOpacity(0.12)
-                    : AppTheme.primary.withOpacity(0.12),
+                    ? const Color(0xFF1E2822)
+                    : AppTheme.primary.withValues(alpha: 0.12),
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: selectedDay.isWeekend
-                      ? Colors.teal.withOpacity(0.4)
-                      : AppTheme.primary.withOpacity(0.4),
+                      ? const Color(0xFF334B38)
+                      : AppTheme.primary.withValues(alpha: 0.4),
                   width: 1,
                 ),
               ),
@@ -654,7 +808,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                   Icon(
                     selectedDay.isWeekend ? Icons.nature_people_rounded : Icons.fitness_center_rounded,
                     size: 13,
-                    color: selectedDay.isWeekend ? Colors.teal.shade700 : AppTheme.primary,
+                    color: selectedDay.isWeekend ? const Color(0xFF76D799) : AppTheme.primary,
                   ),
                   const SizedBox(width: 5),
                   Text(
@@ -662,7 +816,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                     style: GoogleFonts.manrope(
                       fontSize: 11,
                       fontWeight: FontWeight.w700,
-                      color: selectedDay.isWeekend ? Colors.teal.shade700 : AppTheme.primary,
+                      color: selectedDay.isWeekend ? const Color(0xFF76D799) : AppTheme.primary,
                     ),
                   ),
                 ],
@@ -677,16 +831,9 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           height: 195,
           padding: const EdgeInsets.fromLTRB(16, 18, 16, 12),
           decoration: BoxDecoration(
-            color: theme.cardTheme.color,
+            color: AppTheme.surfaceDark,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.grey.withOpacity(0.12)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.04),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
+            border: Border.all(color: AppTheme.surfaceBorder, width: 1),
           ),
           child: BarChart(
             BarChartData(
@@ -707,7 +854,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                   }
                 },
                 touchTooltipData: BarTouchTooltipData(
-                  getTooltipColor: (group) => Colors.grey.shade900,
+                  getTooltipColor: (group) => const Color(0xFF141714),
                   tooltipPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                   tooltipMargin: 8,
                   getTooltipItem: (group, groupIndex, rod, rodIndex) {
@@ -715,7 +862,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                     return BarTooltipItem(
                       "${item.dayName} ${group.x.toInt() == _todayIndex ? '(Today)' : ''}\n",
                       const TextStyle(
-                        color: Colors.white,
+                        color: AppTheme.textDark,
                         fontWeight: FontWeight.bold,
                         fontSize: 12,
                       ),
@@ -723,15 +870,15 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                         TextSpan(
                           text: "${item.calories.toInt()} kcal\n",
                           style: const TextStyle(
-                            color: AppTheme.accentGreen,
+                            color: AppTheme.primary,
                             fontSize: 11,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
                         TextSpan(
                           text: item.focus,
-                          style: TextStyle(
-                            color: Colors.grey.shade400,
+                          style: const TextStyle(
+                            color: AppTheme.textSecondary,
                             fontSize: 10,
                           ),
                         ),
@@ -768,31 +915,39 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                                   item.dayShort,
                                   style: TextStyle(
                                     color: isToday
-                                        ? AppTheme.accentGreen
-                                        : (item.isWeekend
-                                            ? Colors.teal.shade600
-                                            : (isSelected ? AppTheme.primary : Colors.grey.shade500)),
+                                        ? AppTheme.primary
+                                        : (isSelected
+                                            ? AppTheme.textDark
+                                            : (item.isWeekend
+                                                ? const Color(0xFF6A7F70)
+                                                : AppTheme.textSecondary)),
                                     fontSize: 12,
                                     fontWeight: isToday || isSelected ? FontWeight.bold : FontWeight.w600,
                                   ),
                                 ),
                                 if (isToday)
                                   Container(
-                                    margin: const EdgeInsets.only(top: 2),
+                                    margin: const EdgeInsets.only(top: 3),
                                     width: 4,
                                     height: 4,
-                                    decoration: const BoxDecoration(
-                                      color: AppTheme.accentGreen,
+                                    decoration: BoxDecoration(
+                                      color: AppTheme.primary,
                                       shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppTheme.primary.withValues(alpha: 0.6),
+                                          blurRadius: 4,
+                                        ),
+                                      ],
                                     ),
                                   )
                                 else if (item.isWeekend)
                                   Container(
-                                    margin: const EdgeInsets.only(top: 2),
+                                    margin: const EdgeInsets.only(top: 3),
                                     width: 3,
                                     height: 3,
-                                    decoration: BoxDecoration(
-                                      color: Colors.teal.shade300,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF435848),
                                       shape: BoxShape.circle,
                                     ),
                                   ),
@@ -827,18 +982,18 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     final isWeekend = data.isWeekend;
 
     // Distinct Rod Colors:
-    // Today: Radiant accent gradient
-    // Weekend: Distinct teal/amber tone
-    // Regular Weekdays: Sophisticated purple shade
+    // Today: Glowing neon green gradient
+    // Weekend: Muted slate-forest tone
+    // Past days: Muted grey/white tone
     Color rodColor;
     if (isToday) {
       rodColor = AppTheme.primary;
     } else if (isWeekend) {
-      rodColor = Colors.teal.shade400;
+      rodColor = const Color(0xFF2C382F);
     } else if (isSelected) {
-      rodColor = AppTheme.primary.withOpacity(0.75);
+      rodColor = const Color(0xFF5A635A);
     } else {
-      rodColor = AppTheme.primary.withOpacity(0.35);
+      rodColor = const Color(0xFF383E38);
     }
 
     return BarChartGroupData(
@@ -849,7 +1004,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           color: rodColor,
           gradient: isToday
               ? const LinearGradient(
-                  colors: [AppTheme.primary, AppTheme.accentGreen],
+                  colors: [Color(0xFF8CE00A), AppTheme.primary],
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
                 )
@@ -857,14 +1012,14 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           width: isToday ? 15 : (isWeekend ? 13 : 12),
           borderRadius: BorderRadius.circular(6),
           borderSide: isToday
-              ? const BorderSide(color: AppTheme.accentGreen, width: 1.5)
-              : (isSelected ? BorderSide(color: AppTheme.primary, width: 1.2) : BorderSide.none),
+              ? const BorderSide(color: AppTheme.primary, width: 1.5)
+              : (isSelected ? const BorderSide(color: Colors.white38, width: 1.2) : BorderSide.none),
           backDrawRodData: BackgroundBarChartRodData(
             show: true,
             toY: 3200,
             color: isToday
-                ? AppTheme.accentGreen.withOpacity(0.08)
-                : (isWeekend ? Colors.teal.withOpacity(0.05) : theme.colorScheme.primary.withOpacity(0.05)),
+                ? AppTheme.primary.withValues(alpha: 0.1)
+                : const Color(0xFF141714),
           ),
         ),
       ],
@@ -872,10 +1027,9 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
   }
 
   // ==========================================
-  // FIX 5: Varied Today's Picks with Microcopy
+  // 6. Today's Plan Section (Full-Bleed Images, Dark Gradients, Neon Pills)
   // ==========================================
   Widget _buildTodayWorkout(BuildContext context, ThemeData theme, bool isPremium) {
-    // Varied picks distinct from generic workout library
     final picks = [
       {
         "title": "Upper Body Hypertrophy",
@@ -898,14 +1052,15 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Section Header with See All Navigation
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               "Today's Plan",
-              style: theme.textTheme.headlineMedium?.copyWith(
-                fontWeight: FontWeight.bold,
+              style: GoogleFonts.poppins(
+                fontSize: 20,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.textDark,
               ),
             ),
             TextButton(
@@ -918,21 +1073,19 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               child: Text(
                 "See All",
                 style: GoogleFonts.manrope(
-                  color: theme.colorScheme.primary,
+                  color: AppTheme.primary,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             ),
           ],
         ),
-
-        // Personalized for you microcopy line
         Row(
           children: [
             Icon(
               Icons.auto_awesome,
               size: 14,
-              color: isPremium ? const Color(0xFFFFA000) : AppTheme.primary,
+              color: isPremium ? AppTheme.accentPurple : AppTheme.primary,
             ),
             const SizedBox(width: 6),
             Text(
@@ -942,14 +1095,12 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
               style: GoogleFonts.manrope(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
-                color: isPremium ? const Color(0xFFE65100) : Colors.grey.shade600,
+                color: isPremium ? AppTheme.accentPurple : AppTheme.textSecondary,
               ),
             ),
           ],
         ),
         const SizedBox(height: 12),
-
-        // Workout Pick Cards
         Column(
           children: picks.map((workout) {
             return _buildPickCard(context, theme, workout);
@@ -973,105 +1124,108 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
+        margin: const EdgeInsets.only(bottom: 14),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.12),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppTheme.surfaceBorder, width: 1),
         ),
         child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(20),
           child: Stack(
             children: [
-              // Background image with fallback
+              // Full-bleed Image with fallback
               Positioned.fill(
                 child: Image.network(
                   workout["image"]!,
                   fit: BoxFit.cover,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      decoration: const BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Color(0xFF311B92), Color(0xFF5E35B1)],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
+                      color: const Color(0xFF1B201B),
+                      child: const Center(
+                        child: Icon(Icons.fitness_center_rounded, color: AppTheme.primary, size: 40),
                       ),
                     );
                   },
                 ),
               ),
-              // Gradient Overlay & Content
+              // Dark Athletic Gradient Overlay
               Container(
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,
                     colors: [
-                      Colors.black.withOpacity(0.1),
-                      Colors.black.withOpacity(0.85),
+                      Colors.transparent,
+                      const Color(0xFF0D0F0D).withValues(alpha: 0.4),
+                      const Color(0xFF0D0F0D).withValues(alpha: 0.95),
                     ],
+                    stops: const [0.15, 0.5, 1.0],
                   ),
                 ),
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(18),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Badge tag
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.4),
+                        color: const Color(0xFF141714).withValues(alpha: 0.85),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.white.withOpacity(0.3)),
+                        border: Border.all(
+                          color: AppTheme.primary.withValues(alpha: 0.35),
+                          width: 0.8,
+                        ),
                       ),
                       child: Text(
                         workout["tag"]!,
                         style: GoogleFonts.manrope(
-                          color: Colors.white,
-                          fontSize: 9,
+                          color: AppTheme.primary,
+                          fontSize: 10,
                           fontWeight: FontWeight.w800,
-                          letterSpacing: 0.4,
+                          letterSpacing: 0.5,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 48),
+                    const SizedBox(height: 52),
 
                     // Title
                     Text(
                       workout["title"]!,
                       style: GoogleFonts.poppins(
                         fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
+                        fontWeight: FontWeight.w800,
+                        color: AppTheme.textDark,
+                        letterSpacing: -0.2,
                       ),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
 
-                    // Duration, Difficulty, and Calorie Badges
+                    // Duration, Difficulty, and Calorie Badges in Neon Green Pills
                     Row(
                       children: [
-                        _buildMiniTag(Icons.timer_outlined, workout["duration"]!),
+                        _buildNeonPill(Icons.timer_outlined, workout["duration"]!),
                         const SizedBox(width: 8),
-                        _buildMiniTag(Icons.fitness_center_outlined, workout["difficulty"]!),
+                        _buildNeonPill(Icons.fitness_center_outlined, workout["difficulty"]!),
                         const SizedBox(width: 8),
-                        _buildMiniTag(Icons.local_fire_department_outlined, workout["calories"]!),
+                        _buildNeonPill(Icons.local_fire_department_outlined, workout["calories"]!),
                         const Spacer(),
                         Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primary,
                             shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppTheme.primary.withValues(alpha: 0.4),
+                                blurRadius: 8,
+                              ),
+                            ],
                           ),
                           child: const Icon(
                             Icons.play_arrow_rounded,
-                            size: 16,
-                            color: Colors.black,
+                            size: 18,
+                            color: Color(0xFF0D0F0D),
                           ),
                         ),
                       ],
@@ -1086,24 +1240,28 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     );
   }
 
-  Widget _buildMiniTag(IconData icon, String text) {
+  Widget _buildNeonPill(IconData icon, String text) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: const Color(0xFF141714).withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: AppTheme.primary.withValues(alpha: 0.3),
+          width: 0.8,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 12, color: Colors.white),
-          const SizedBox(width: 3),
+          Icon(icon, size: 12, color: AppTheme.primary),
+          const SizedBox(width: 4),
           Text(
             text,
             style: GoogleFonts.manrope(
               fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
+              fontWeight: FontWeight.w700,
+              color: AppTheme.textDark,
             ),
           ),
         ],
