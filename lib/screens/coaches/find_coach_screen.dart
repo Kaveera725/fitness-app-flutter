@@ -6,7 +6,9 @@ import 'package:fitness/widgets/coach_card.dart';
 import 'coach_detail_screen.dart';
 
 class FindCoachScreen extends StatefulWidget {
-  const FindCoachScreen({super.key});
+  final String? bannerMessage;
+
+  const FindCoachScreen({super.key, this.bannerMessage});
 
   @override
   State<FindCoachScreen> createState() => _FindCoachScreenState();
@@ -146,6 +148,36 @@ class _FindCoachScreenState extends State<FindCoachScreen> {
       ),
       body: Column(
         children: [
+          if (widget.bannerMessage != null)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: const Color(0xFF161B16),
+                border: Border(
+                  bottom: BorderSide(
+                    color: const Color(0xFFC6FF00).withValues(alpha: 0.4),
+                    width: 1,
+                  ),
+                ),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline_rounded, color: Color(0xFFC6FF00), size: 18),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      widget.bannerMessage!,
+                      style: const TextStyle(
+                        color: Color(0xFFC6FF00),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           // Search bar
           Padding(
             padding: const EdgeInsets.all(16.0),
