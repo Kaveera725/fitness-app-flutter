@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../theme/app_theme.dart';
 
 /// A reusable Google Sign-In button designed for FitPulse.
 ///
@@ -61,9 +62,12 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
               ),
             ],
           ),
-          backgroundColor: const Color(0xFF5E35B1),
+          backgroundColor: AppTheme.surfaceDark,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: const BorderSide(color: AppTheme.surfaceBorder, width: 1),
+          ),
         ),
       );
 
@@ -85,23 +89,21 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
 
   @override
   Widget build(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-
     final child = OutlinedButton(
       onPressed: _isLoading ? null : _signInWithGoogle,
       style: OutlinedButton.styleFrom(
-        backgroundColor: isDark ? const Color(0xFF1E1E1E) : Colors.white,
-        foregroundColor: isDark ? Colors.white : const Color(0xFF1F1F1F),
-        side: BorderSide(
-          color: isDark ? Colors.white.withOpacity(0.15) : Colors.grey.shade300,
+        backgroundColor: AppTheme.surfaceDark,
+        foregroundColor: AppTheme.textDark,
+        side: const BorderSide(
+          color: AppTheme.surfaceBorder,
           width: 1.2,
         ),
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
         ),
-        elevation: isDark ? 0 : 1,
-        shadowColor: Colors.black.withOpacity(0.04),
+        elevation: 0,
+        shadowColor: Colors.transparent,
       ),
       child: _isLoading
           ? const SizedBox(
@@ -109,7 +111,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
               width: 22,
               child: CircularProgressIndicator(
                 strokeWidth: 2.2,
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF5E35B1)),
+                valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primary),
               ),
             )
           : Row(
@@ -124,7 +126,7 @@ class _GoogleSignInButtonState extends State<GoogleSignInButton> {
                   style: GoogleFonts.poppins(
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : const Color(0xFF2D2D2D),
+                    color: AppTheme.textDark,
                     letterSpacing: 0.2,
                   ),
                 ),

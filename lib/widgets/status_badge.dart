@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import '../theme/app_theme.dart';
+
 enum BadgeType {
   active,
   pending,
@@ -24,7 +26,7 @@ class StatusBadge extends StatelessWidget {
     this.customColor,
     this.icon,
     this.fontSize = 12,
-    this.padding = const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+    this.padding = const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
   });
 
   factory StatusBadge.active({String label = 'Active'}) {
@@ -63,27 +65,36 @@ class StatusBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     Color primaryColor;
     Color backgroundColor;
+    Color borderColor;
 
     switch (type) {
       case BadgeType.active:
-        primaryColor = const Color(0xFF00C853); // Emerald Green
-        backgroundColor = const Color(0xFF00C853).withOpacity(0.12);
+        // Neon green text/icon with dark translucent background
+        primaryColor = AppTheme.primary;
+        backgroundColor = AppTheme.primary.withValues(alpha: 0.14);
+        borderColor = AppTheme.primary.withValues(alpha: 0.35);
         break;
       case BadgeType.pending:
-        primaryColor = const Color(0xFFFF9100); // Amber Orange
-        backgroundColor = const Color(0xFFFF9100).withOpacity(0.12);
+        primaryColor = AppTheme.accentOrange;
+        backgroundColor = AppTheme.accentOrange.withValues(alpha: 0.14);
+        borderColor = AppTheme.accentOrange.withValues(alpha: 0.35);
         break;
       case BadgeType.premium:
-        primaryColor = const Color(0xFF7C4DFF); // Deep Indigo/Purple
-        backgroundColor = const Color(0xFF7C4DFF).withOpacity(0.14);
+        // Secondary accent purple strictly for premium/pro badge
+        primaryColor = AppTheme.accentPurple;
+        backgroundColor = AppTheme.accentPurple.withValues(alpha: 0.16);
+        borderColor = AppTheme.accentPurple.withValues(alpha: 0.38);
         break;
       case BadgeType.free:
-        primaryColor = Colors.grey.shade600;
-        backgroundColor = Colors.grey.withOpacity(0.12);
+        // Muted grey for inactive/free
+        primaryColor = AppTheme.textSecondary;
+        backgroundColor = const Color(0xFF222622);
+        borderColor = AppTheme.surfaceBorder;
         break;
       case BadgeType.custom:
-        primaryColor = customColor ?? Theme.of(context).colorScheme.primary;
-        backgroundColor = primaryColor.withOpacity(0.12);
+        primaryColor = customColor ?? AppTheme.primary;
+        backgroundColor = primaryColor.withValues(alpha: 0.14);
+        borderColor = primaryColor.withValues(alpha: 0.35);
         break;
     }
 
@@ -93,7 +104,7 @@ class StatusBadge extends StatelessWidget {
         color: backgroundColor,
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-          color: primaryColor.withOpacity(0.3),
+          color: borderColor,
           width: 1,
         ),
       ),
@@ -107,7 +118,7 @@ class StatusBadge extends StatelessWidget {
               size: fontSize + 2,
               color: primaryColor,
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 5),
           ] else ...[
             Container(
               width: 6,
@@ -115,6 +126,14 @@ class StatusBadge extends StatelessWidget {
               decoration: BoxDecoration(
                 color: primaryColor,
                 shape: BoxShape.circle,
+                boxShadow: type == BadgeType.active
+                    ? [
+                        BoxShadow(
+                          color: AppTheme.primary.withValues(alpha: 0.6),
+                          blurRadius: 4,
+                        ),
+                      ]
+                    : null,
               ),
             ),
             const SizedBox(width: 6),

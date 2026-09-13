@@ -14,9 +14,9 @@ class FitPulseApp extends StatelessWidget {
     return MaterialApp(
       title: 'FitPulse',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.lightTheme,
+      theme: AppTheme.darkTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system, // Supports both light and dark mode automatically
+      themeMode: ThemeMode.dark,
       home: const SplashScreen(),
     );
   }

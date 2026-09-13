@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../theme/app_theme.dart';
-
 class GradientButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
   final Widget? icon;
   final List<Color>? gradientColors;
+  final Color? textColor;
   final double borderRadius;
   final double height;
   final EdgeInsetsGeometry padding;
@@ -20,6 +19,7 @@ class GradientButton extends StatelessWidget {
     this.isLoading = false,
     this.icon,
     this.gradientColors,
+    this.textColor,
     this.borderRadius = 16.0,
     this.height = 56.0,
     this.padding = const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
@@ -27,14 +27,21 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Default: High-energy athletic neon lime gradient
     final colors = gradientColors ??
         const [
-          Color(0xFF7C4DFF), // Vibrant Indigo
-          AppTheme.primary, // Deep Purple
-          Color(0xFF311B92), // Rich Dark Purple
+          Color(0xFFC6FF00), // Vibrant Neon Lime
+          Color(0xFFB4F81C), // Primary Lime Accent
+          Color(0xFF9DE00B), // Deep Lime
         ];
 
     final isEnabled = onPressed != null && !isLoading;
+
+    // By default, text on neon green is high-contrast near-black
+    final effectiveTextColor = textColor ??
+        (colors.first.computeLuminance() > 0.4
+            ? const Color(0xFF0D0F0D)
+            : Colors.white);
 
     return Container(
       width: double.infinity,
@@ -48,17 +55,17 @@ class GradientButton extends StatelessWidget {
               )
             : LinearGradient(
                 colors: [
-                  Colors.grey.shade700,
                   Colors.grey.shade800,
+                  Colors.grey.shade900,
                 ],
               ),
         borderRadius: BorderRadius.circular(borderRadius),
         boxShadow: isEnabled
             ? [
                 BoxShadow(
-                  color: colors.first.withOpacity(0.35),
+                  color: colors.first.withValues(alpha: 0.3),
                   blurRadius: 16,
-                  offset: const Offset(0, 6),
+                  offset: const Offset(0, 4),
                 ),
               ]
             : [],
@@ -68,18 +75,18 @@ class GradientButton extends StatelessWidget {
         child: InkWell(
           onTap: isEnabled ? onPressed : null,
           borderRadius: BorderRadius.circular(borderRadius),
-          splashColor: Colors.white.withOpacity(0.15),
-          highlightColor: Colors.white.withOpacity(0.08),
+          splashColor: Colors.black.withValues(alpha: 0.12),
+          highlightColor: Colors.black.withValues(alpha: 0.06),
           child: Padding(
             padding: padding,
             child: Center(
               child: isLoading
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 24,
                       height: 24,
                       child: CircularProgressIndicator(
                         strokeWidth: 2.5,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                        valueColor: AlwaysStoppedAnimation<Color>(effectiveTextColor),
                       ),
                     )
                   : Row(
@@ -94,8 +101,8 @@ class GradientButton extends StatelessWidget {
                           text,
                           style: GoogleFonts.poppins(
                             fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            fontWeight: FontWeight.w700,
+                            color: effectiveTextColor,
                             letterSpacing: 0.3,
                           ),
                         ),

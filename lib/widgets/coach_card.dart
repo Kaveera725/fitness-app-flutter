@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fitness/models/coach.dart';
+import 'package:fitness/theme/app_theme.dart';
 import 'package:fitness/widgets/status_badge.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -15,10 +16,16 @@ class CoachCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      elevation: 3,
+    return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: AppTheme.surfaceDark,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: AppTheme.surfaceBorder,
+          width: 1,
+        ),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -33,7 +40,7 @@ class CoachCard extends StatelessWidget {
                   child: Container(
                     width: 68,
                     height: 68,
-                    color: const Color(0xFF5E35B1).withOpacity(0.12),
+                    color: AppTheme.primary.withValues(alpha: 0.12),
                     child: Image.network(
                       coach.imageUrl,
                       width: 68,
@@ -44,7 +51,7 @@ class CoachCard extends StatelessWidget {
                           width: 68,
                           height: 68,
                           decoration: BoxDecoration(
-                            color: const Color(0xFF5E35B1).withOpacity(0.15),
+                            color: AppTheme.primary.withValues(alpha: 0.15),
                             shape: BoxShape.circle,
                           ),
                           child: Center(
@@ -53,7 +60,7 @@ class CoachCard extends StatelessWidget {
                               style: GoogleFonts.poppins(
                                 fontSize: 26,
                                 fontWeight: FontWeight.bold,
-                                color: const Color(0xFF5E35B1),
+                                color: AppTheme.primary,
                               ),
                             ),
                           ),
@@ -64,14 +71,14 @@ class CoachCard extends StatelessWidget {
                         return Container(
                           width: 68,
                           height: 68,
-                          color: Colors.grey.shade200,
+                          color: const Color(0xFF1F241F),
                           child: const Center(
                             child: SizedBox(
                               width: 20,
                               height: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                color: Color(0xFF5E35B1),
+                                color: AppTheme.primary,
                               ),
                             ),
                           ),
@@ -91,22 +98,27 @@ class CoachCard extends StatelessWidget {
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.w700,
+                          color: AppTheme.textDark,
                         ),
                       ),
-                      const SizedBox(height: 3),
+                      const SizedBox(height: 4),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                            horizontal: 8, vertical: 3),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF5E35B1).withOpacity(0.1),
+                          color: AppTheme.primary.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(8),
+                          border: Border.all(
+                            color: AppTheme.primary.withValues(alpha: 0.25),
+                            width: 0.8,
+                          ),
                         ),
                         child: Text(
                           coach.specialty,
                           style: GoogleFonts.manrope(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
-                            color: const Color(0xFF5E35B1),
+                            color: AppTheme.primary,
                           ),
                         ),
                       ),
@@ -121,6 +133,7 @@ class CoachCard extends StatelessWidget {
                             style: GoogleFonts.manrope(
                               fontSize: 13,
                               fontWeight: FontWeight.w700,
+                              color: AppTheme.textDark,
                             ),
                           ),
                           const SizedBox(width: 4),
@@ -128,14 +141,14 @@ class CoachCard extends StatelessWidget {
                             '(${coach.reviewCount} reviews)',
                             style: GoogleFonts.manrope(
                               fontSize: 12,
-                              color: Colors.grey.shade600,
+                              color: AppTheme.textSecondary,
                             ),
                           ),
                           const Spacer(),
                           StatusBadge(
                             label: '${coach.experienceYears} yrs',
                             type: BadgeType.custom,
-                            customColor: const Color(0xFF5E35B1),
+                            customColor: AppTheme.primary,
                             fontSize: 11,
                           ),
                         ],
@@ -146,25 +159,27 @@ class CoachCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 14),
-            // Full-width View Profile button
+            // Full-width View Profile button (High-contrast bold on neon lime)
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: onViewProfile,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF5E35B1),
-                  foregroundColor: Colors.white,
-                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  backgroundColor: AppTheme.primary,
+                  foregroundColor: const Color(0xFF0D0F0D),
+                  padding: const EdgeInsets.symmetric(vertical: 13),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   elevation: 0,
                 ),
                 child: Text(
                   'View Profile',
                   style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w700,
                     fontSize: 14,
+                    color: const Color(0xFF0D0F0D),
+                    letterSpacing: 0.2,
                   ),
                 ),
               ),

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import '../theme/app_theme.dart';
 
 class WorkoutCard extends StatelessWidget {
   final String title;
@@ -24,6 +26,10 @@ class WorkoutCard extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 16),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: AppTheme.surfaceBorder,
+            width: 1,
+          ),
           image: DecorationImage(
             image: NetworkImage(imageUrl),
             fit: BoxFit.cover,
@@ -37,8 +43,10 @@ class WorkoutCard extends StatelessWidget {
               end: Alignment.bottomCenter,
               colors: [
                 Colors.transparent,
-                Colors.black.withOpacity(0.8),
+                const Color(0xFF0D0F0D).withValues(alpha: 0.4),
+                const Color(0xFF0D0F0D).withValues(alpha: 0.94),
               ],
+              stops: const [0.2, 0.6, 1.0],
             ),
           ),
           padding: const EdgeInsets.all(20),
@@ -49,17 +57,19 @@ class WorkoutCard extends StatelessWidget {
               const SizedBox(height: 80), // To give image space
               Text(
                 title,
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    ),
+                style: GoogleFonts.poppins(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  color: AppTheme.textDark,
+                  letterSpacing: -0.2,
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 10),
               Row(
                 children: [
-                  _buildTag(Icons.timer, duration, context),
-                  const SizedBox(width: 12),
-                  _buildTag(Icons.local_fire_department, difficulty, context),
+                  _buildTag(Icons.timer_outlined, duration, AppTheme.primary),
+                  const SizedBox(width: 10),
+                  _buildTag(Icons.local_fire_department_rounded, difficulty, Colors.orangeAccent),
                 ],
               ),
             ],
@@ -69,24 +79,29 @@ class WorkoutCard extends StatelessWidget {
     );
   }
 
-  Widget _buildTag(IconData icon, String text, BuildContext context) {
+  Widget _buildTag(IconData icon, String text, Color accentColor) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.2),
+        color: const Color(0xFF141714).withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: accentColor.withValues(alpha: 0.3),
+          width: 0.8,
+        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 14, color: Colors.white),
-          const SizedBox(width: 4),
+          Icon(icon, size: 14, color: accentColor),
+          const SizedBox(width: 5),
           Text(
             text,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
+            style: GoogleFonts.manrope(
+              color: AppTheme.textDark,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
+            ),
           ),
         ],
       ),

@@ -55,9 +55,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -66,7 +63,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
           style: GoogleFonts.poppins(
             fontSize: 13,
             fontWeight: FontWeight.w600,
-            color: isDark ? Colors.white70 : Colors.grey.shade800,
+            color: AppTheme.textDark,
           ),
         ),
         const SizedBox(height: 8),
@@ -83,18 +80,19 @@ class _CustomTextFieldState extends State<CustomTextField> {
           onChanged: widget.onChanged,
           style: GoogleFonts.manrope(
             fontSize: 15,
-            color: isDark ? Colors.white : Colors.black87,
+            color: AppTheme.textDark,
+            fontWeight: FontWeight.w500,
           ),
           decoration: InputDecoration(
             hintText: widget.hint,
             hintStyle: GoogleFonts.manrope(
               fontSize: 14,
-              color: Colors.grey.shade500,
+              color: AppTheme.textSecondary,
             ),
             helperText: widget.helperText,
             helperStyle: GoogleFonts.manrope(
               fontSize: 11,
-              color: Colors.grey,
+              color: AppTheme.textSecondary,
             ),
             prefixIcon: widget.prefixIcon != null
                 ? Icon(
@@ -109,7 +107,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
                       _obscureText
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
-                      color: Colors.grey,
+                      color: AppTheme.textSecondary,
                       size: 20,
                     ),
                     onPressed: () {
@@ -120,22 +118,22 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   )
                 : widget.suffixIcon,
             filled: true,
-            fillColor: isDark ? const Color(0xFF222222) : const Color(0xFFF7F7FA),
+            fillColor: const Color(0xFF141714),
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 16,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.2),
+              borderSide: const BorderSide(
+                color: AppTheme.surfaceBorder,
                 width: 1,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: Colors.grey.withOpacity(0.2),
+              borderSide: const BorderSide(
+                color: AppTheme.surfaceBorder,
                 width: 1,
               ),
             ),
@@ -143,7 +141,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
                 color: AppTheme.primary,
-                width: 1.8,
+                width: 1.6,
               ),
             ),
             errorBorder: OutlineInputBorder(
@@ -157,7 +155,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               borderRadius: BorderRadius.circular(16),
               borderSide: const BorderSide(
                 color: Colors.redAccent,
-                width: 1.8,
+                width: 1.6,
               ),
             ),
           ),
