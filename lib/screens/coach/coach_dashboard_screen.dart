@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/status_badge.dart';
 import '../main_tab_screen.dart';
+import 'meal_plans/meal_plan_requests_screen.dart';
 
 class CoachDashboardScreen extends StatefulWidget {
   final String coachName;
@@ -91,7 +92,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: AppTheme.primary.withOpacity(0.3),
+                      color: AppTheme.primary.withValues(alpha: 0.3),
                       blurRadius: 18,
                       offset: const Offset(0, 8),
                     ),
@@ -147,7 +148,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                             style: GoogleFonts.manrope(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: Colors.white.withOpacity(0.9),
+                              color: Colors.white.withValues(alpha: 0.9),
                             ),
                           ),
                           const SizedBox(height: 6),
@@ -155,7 +156,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.2),
+                              color: Colors.white.withValues(alpha: 0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -259,7 +260,106 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                 ],
               ).animate().fadeIn(delay: 200.ms),
 
-              const SizedBox(height: 28),
+              const SizedBox(height: 14),
+
+              // Meal Plan Requests Quick Access Card
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => const MealPlanRequestsScreen(),
+                    ),
+                  );
+                },
+                borderRadius: BorderRadius.circular(18),
+                child: Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppTheme.surfaceDark : Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: AppTheme.primary.withValues(alpha: 0.4),
+                      width: 1.2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.primary.withValues(alpha: 0.08),
+                        blurRadius: 14,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: const Icon(
+                          Icons.restaurant_menu_rounded,
+                          color: AppTheme.primary,
+                          size: 24,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Text(
+                                  "Meal Plan Requests",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w700,
+                                    color: isDark ? AppTheme.textDark : Colors.black87,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: AppTheme.primary,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    "3 Pending",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      color: const Color(0xFF0D0F0D),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              "Review trainee body stats & build customized meal plans",
+                              style: GoogleFonts.manrope(
+                                fontSize: 12,
+                                color: isDark ? AppTheme.textSecondary : Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      const Icon(
+                        Icons.arrow_forward_ios_rounded,
+                        color: AppTheme.primary,
+                        size: 16,
+                      ),
+                    ],
+                  ),
+                ),
+              ).animate().fadeIn(delay: 240.ms).slideY(begin: 0.05, end: 0),
+
+              const SizedBox(height: 24),
 
               // Active Trainees Header
               Row(
@@ -341,7 +441,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                                     value: t['progress'] as double,
                                     minHeight: 6,
                                     backgroundColor:
-                                        Colors.grey.withOpacity(0.2),
+                                        Colors.grey.withValues(alpha: 0.2),
                                     valueColor:
                                         const AlwaysStoppedAnimation<Color>(
                                       AppTheme.accentGreen,
