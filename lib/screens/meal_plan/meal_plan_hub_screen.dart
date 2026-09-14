@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 import '../coaches/find_coach_screen.dart';
 import 'self_build_meal_plan_screen.dart';
+import 'request_meal_plan_screen.dart';
 
 enum UserTier {
   free,
@@ -199,18 +200,19 @@ class _MealPlanHubScreenState extends State<MealPlanHubScreen> {
         ),
       );
     } else if (isPremium && hasCoach) {
-      // STATE 2: Request sent to assigned coach
-      setState(() {
-        hasPendingRequest = true;
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Meal plan request sent to ${_coach['name']}!"),
-          backgroundColor: AppTheme.surfaceDark,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-            side: const BorderSide(color: AppTheme.primary),
+      // STATE 2: Open Request Meal Plan Form Screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => RequestMealPlanScreen(
+            coachName: _coach['name'],
+            coachSpecialty: _coach['specialty'],
+            coachAvatarUrl: _coach['imageUrl'],
+            onRequestSubmitted: () {
+              setState(() {
+                hasPendingRequest = true;
+              });
+            },
           ),
         ),
       );
