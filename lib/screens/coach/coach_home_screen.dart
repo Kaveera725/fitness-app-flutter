@@ -4,6 +4,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/app_theme.dart';
+import 'client_detail_screen.dart';
 import 'meal_plans/meal_plan_requests_screen.dart';
 import 'my_clients_screen.dart';
 
@@ -375,6 +376,47 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
                     ),
                   ),
                 ],
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: TextButton.icon(
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ClientDetailScreen(
+                          client: ClientItem(
+                            id: 'c_${client.name.toLowerCase().replaceAll(' ', '_')}',
+                            name: client.name,
+                            avatarUrl: client.avatarUrl,
+                            goal: client.goal,
+                            plan: client.plan,
+                            adherence: client.weeklyProgress,
+                            status: client.weeklyProgress >= 0.75
+                                ? ClientStatus.onTrack
+                                : ClientStatus.fallingBehind,
+                            lastActive: client.lastSeen,
+                            weight: '62.5 kg',
+                            targetWeight: '60.0 kg',
+                            completedWorkouts: 4,
+                            targetWorkouts: 4,
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.person_rounded, size: 16, color: AppTheme.accentGreen),
+                  label: Text(
+                    'View Full Client Profile & Stats',
+                    style: GoogleFonts.poppins(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppTheme.accentGreen,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
