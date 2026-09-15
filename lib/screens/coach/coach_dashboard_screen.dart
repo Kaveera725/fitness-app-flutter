@@ -4,9 +4,9 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
-import '../../widgets/status_badge.dart';
 import 'coach_home_screen.dart';
 import 'meal_plans/meal_plan_requests_screen.dart';
+import 'my_clients_screen.dart';
 
 class CoachDashboardScreen extends StatefulWidget {
   final String coachName;
@@ -27,59 +27,20 @@ class CoachDashboardScreen extends StatefulWidget {
 class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
   int _selectedIndex = 0;
 
-  final List<Map<String, dynamic>> _trainees = [
-    {
-      'name': 'Sarah Jenkins',
-      'plan': '12-Week Hypertrophy',
-      'progress': 0.75,
-      'lastActive': 'Today, 9:30 AM',
-      'avatar': 'https://i.pravatar.cc/150?img=47',
-    },
-    {
-      'name': 'Alexander Wright',
-      'plan': 'Athletic Conditioning',
-      'progress': 0.40,
-      'lastActive': 'Yesterday',
-      'avatar': 'https://i.pravatar.cc/150?img=12',
-    },
-    {
-      'name': 'Olivia Martinez',
-      'plan': 'Strength Foundation',
-      'progress': 0.90,
-      'lastActive': '2 hours ago',
-      'avatar': 'https://i.pravatar.cc/150?img=23',
-    },
-    {
-      'name': 'James Liu',
-      'plan': 'Fat Loss Protocol',
-      'progress': 0.60,
-      'lastActive': '3 days ago',
-      'avatar': 'https://i.pravatar.cc/150?img=33',
-    },
-    {
-      'name': 'Priya Nair',
-      'plan': 'Endurance Base',
-      'progress': 0.25,
-      'lastActive': '5 days ago',
-      'avatar': 'https://i.pravatar.cc/150?img=56',
-    },
-    {
-      'name': 'Tom Reeves',
-      'plan': 'Mobility & Recovery',
-      'progress': 0.70,
-      'lastActive': 'Today',
-      'avatar': 'https://i.pravatar.cc/150?img=68',
-    },
-  ];
-
   late final List<Widget> _tabs;
 
   @override
   void initState() {
     super.initState();
     _tabs = [
-      CoachHomeScreen(coachName: widget.coachName.split(' ').first),
-      _ClientsTab(trainees: _trainees),
+      CoachHomeScreen(
+        coachName: widget.coachName.split(' ').first,
+        onViewAllClients: () => setState(() => _selectedIndex = 1),
+      ),
+      MyClientsScreen(
+        isTab: true,
+        coachName: widget.coachName,
+      ),
       const MealPlanRequestsScreen(),
       _CoachProfileTab(
         coachName: widget.coachName,
@@ -131,7 +92,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          '${_trainees.length}',
+                          '9',
                           style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: Colors.black),
                         ),
                       ),
@@ -179,138 +140,7 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Clients Tab (full client list with progress bars)
-// ─────────────────────────────────────────────────────────────────────────────
 
-class _ClientsTab extends StatelessWidget {
-  final List<Map<String, dynamic>> trainees;
-  const _ClientsTab({required this.trainees});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.backgroundDark,
-      body: SafeArea(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'My Clients',
-                    style: GoogleFonts.poppins(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w800,
-                      color: AppTheme.textDark,
-                    ),
-                  ),
-                  StatusBadge.active(label: '${trainees.length} Active'),
-                ],
-              ),
-            ),
-            Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                itemCount: trainees.length,
-                itemBuilder: (_, i) {
-                  final t = trainees[i];
-                  final progress = t['progress'] as double;
-                  Color barColor = AppTheme.accentGreen;
-                  if (progress < 0.75) barColor = AppTheme.accentOrange;
-                  if (progress < 0.40) barColor = Colors.redAccent;
-
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(16),
-                    decoration: BoxDecoration(
-                      color: AppTheme.surfaceDark,
-                      borderRadius: BorderRadius.circular(18),
-                      border: Border.all(color: AppTheme.surfaceBorder, width: 1),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            CircleAvatar(
-                              radius: 24,
-                              backgroundImage: NetworkImage(t['avatar'] as String),
-                              backgroundColor: AppTheme.surfaceLighter,
-                              onBackgroundImageError: (_, _) {},
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    t['name'] as String,
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppTheme.textDark,
-                                    ),
-                                  ),
-                                  Text(
-                                    t['plan'] as String,
-                                    style: GoogleFonts.manrope(
-                                      fontSize: 12,
-                                      color: AppTheme.accentGreen,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              t['lastActive'] as String,
-                              style: GoogleFonts.manrope(
-                                fontSize: 11,
-                                color: AppTheme.textMuted,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(6),
-                                child: LinearProgressIndicator(
-                                  value: progress,
-                                  minHeight: 6,
-                                  backgroundColor: AppTheme.surfaceLighter,
-                                  valueColor: AlwaysStoppedAnimation<Color>(barColor),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            Text(
-                              '${(progress * 100).toInt()}%',
-                              style: GoogleFonts.poppins(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w700,
-                                color: barColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ).animate().fadeIn(delay: (i * 60).ms, duration: 300.ms).slideY(begin: 0.05, end: 0);
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Coach Profile Tab
