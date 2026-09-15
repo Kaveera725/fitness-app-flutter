@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../theme/app_theme.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/status_badge.dart';
-import '../main_tab_screen.dart';
+import 'coach_home_screen.dart';
 import 'meal_plans/meal_plan_requests_screen.dart';
 
 class CoachDashboardScreen extends StatefulWidget {
@@ -15,7 +15,7 @@ class CoachDashboardScreen extends StatefulWidget {
 
   const CoachDashboardScreen({
     super.key,
-    this.coachName = 'Coach Alex Vance',
+    this.coachName = 'Marcus Vance',
     this.coachSpecialty = 'HIIT & Strength',
     this.avatarUrl,
   });
@@ -25,64 +25,320 @@ class CoachDashboardScreen extends StatefulWidget {
 }
 
 class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
+  int _selectedIndex = 0;
+
   final List<Map<String, dynamic>> _trainees = [
     {
       'name': 'Sarah Jenkins',
       'plan': '12-Week Hypertrophy',
       'progress': 0.75,
       'lastActive': 'Today, 9:30 AM',
-      'avatar': 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200',
+      'avatar': 'https://i.pravatar.cc/150?img=47',
     },
     {
       'name': 'Alexander Wright',
       'plan': 'Athletic Conditioning',
       'progress': 0.40,
       'lastActive': 'Yesterday',
-      'avatar': 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
+      'avatar': 'https://i.pravatar.cc/150?img=12',
     },
     {
       'name': 'Olivia Martinez',
       'plan': 'Strength Foundation',
       'progress': 0.90,
       'lastActive': '2 hours ago',
-      'avatar': 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=200',
+      'avatar': 'https://i.pravatar.cc/150?img=23',
+    },
+    {
+      'name': 'James Liu',
+      'plan': 'Fat Loss Protocol',
+      'progress': 0.60,
+      'lastActive': '3 days ago',
+      'avatar': 'https://i.pravatar.cc/150?img=33',
+    },
+    {
+      'name': 'Priya Nair',
+      'plan': 'Endurance Base',
+      'progress': 0.25,
+      'lastActive': '5 days ago',
+      'avatar': 'https://i.pravatar.cc/150?img=56',
+    },
+    {
+      'name': 'Tom Reeves',
+      'plan': 'Mobility & Recovery',
+      'progress': 0.70,
+      'lastActive': 'Today',
+      'avatar': 'https://i.pravatar.cc/150?img=68',
     },
   ];
 
+  late final List<Widget> _tabs;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabs = [
+      CoachHomeScreen(coachName: widget.coachName.split(' ').first),
+      _ClientsTab(trainees: _trainees),
+      const MealPlanRequestsScreen(),
+      _CoachProfileTab(
+        coachName: widget.coachName,
+        coachSpecialty: widget.coachSpecialty,
+        avatarUrl: widget.avatarUrl,
+      ),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Coach Dashboard',
-          style: GoogleFonts.poppins(fontWeight: FontWeight.bold),
+      backgroundColor: AppTheme.backgroundDark,
+      body: IndexedStack(index: _selectedIndex, children: _tabs),
+      bottomNavigationBar: Container(
+        decoration: const BoxDecoration(
+          border: Border(top: BorderSide(color: AppTheme.surfaceBorder, width: 1)),
+          color: AppTheme.surfaceDark,
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.home_outlined),
-            tooltip: 'Go to Main App',
-            onPressed: () {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (_) => const MainTabScreen()),
-                (route) => false,
-              );
-            },
-          ),
-        ],
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: (i) => setState(() => _selectedIndex = i),
+          backgroundColor: AppTheme.surfaceDark,
+          selectedItemColor: AppTheme.accentGreen,
+          unselectedItemColor: AppTheme.textSecondary,
+          type: BottomNavigationBarType.fixed,
+          elevation: 0,
+          selectedLabelStyle: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w600),
+          unselectedLabelStyle: GoogleFonts.poppins(fontSize: 11),
+          items: [
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.home_rounded),
+              label: 'Home',
+            ),
+            BottomNavigationBarItem(
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Icon(Icons.people_alt_rounded),
+                  Positioned(
+                    right: -4,
+                    top: -4,
+                    child: Container(
+                      width: 14,
+                      height: 14,
+                      decoration: const BoxDecoration(
+                        color: AppTheme.accentGreen,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text(
+                          '${_trainees.length}',
+                          style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              label: 'Clients',
+            ),
+            BottomNavigationBarItem(
+              icon: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  const Icon(Icons.inbox_rounded),
+                  Positioned(
+                    right: -4,
+                    top: -4,
+                    child: Container(
+                      width: 14,
+                      height: 14,
+                      decoration: const BoxDecoration(
+                        color: AppTheme.accentOrange,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Text(
+                          '3',
+                          style: TextStyle(fontSize: 8, fontWeight: FontWeight.w800, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              label: 'Requests',
+            ),
+            const BottomNavigationBarItem(
+              icon: Icon(Icons.person_rounded),
+              label: 'Profile',
+            ),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Clients Tab (full client list with progress bars)
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _ClientsTab extends StatelessWidget {
+  final List<Map<String, dynamic>> trainees;
+  const _ClientsTab({required this.trainees});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundDark,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'My Clients',
+                    style: GoogleFonts.poppins(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.textDark,
+                    ),
+                  ),
+                  StatusBadge.active(label: '${trainees.length} Active'),
+                ],
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                itemCount: trainees.length,
+                itemBuilder: (_, i) {
+                  final t = trainees[i];
+                  final progress = t['progress'] as double;
+                  Color barColor = AppTheme.accentGreen;
+                  if (progress < 0.75) barColor = AppTheme.accentOrange;
+                  if (progress < 0.40) barColor = Colors.redAccent;
+
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 12),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: AppTheme.surfaceDark,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppTheme.surfaceBorder, width: 1),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 24,
+                              backgroundImage: NetworkImage(t['avatar'] as String),
+                              backgroundColor: AppTheme.surfaceLighter,
+                              onBackgroundImageError: (_, _) {},
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    t['name'] as String,
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppTheme.textDark,
+                                    ),
+                                  ),
+                                  Text(
+                                    t['plan'] as String,
+                                    style: GoogleFonts.manrope(
+                                      fontSize: 12,
+                                      color: AppTheme.accentGreen,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              t['lastActive'] as String,
+                              style: GoogleFonts.manrope(
+                                fontSize: 11,
+                                color: AppTheme.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(6),
+                                child: LinearProgressIndicator(
+                                  value: progress,
+                                  minHeight: 6,
+                                  backgroundColor: AppTheme.surfaceLighter,
+                                  valueColor: AlwaysStoppedAnimation<Color>(barColor),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              '${(progress * 100).toInt()}%',
+                              style: GoogleFonts.poppins(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: barColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ).animate().fadeIn(delay: (i * 60).ms, duration: 300.ms).slideY(begin: 0.05, end: 0);
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Coach Profile Tab
+// ─────────────────────────────────────────────────────────────────────────────
+
+class _CoachProfileTab extends StatelessWidget {
+  final String coachName;
+  final String coachSpecialty;
+  final String? avatarUrl;
+
+  const _CoachProfileTab({
+    required this.coachName,
+    required this.coachSpecialty,
+    this.avatarUrl,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppTheme.backgroundDark,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
+          padding: const EdgeInsets.fromLTRB(20, 24, 20, 32),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Coach Profile Card
+              // Profile card
               Container(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [AppTheme.primaryDark, AppTheme.primary],
@@ -90,34 +346,33 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(24),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppTheme.primary.withValues(alpha: 0.3),
-                      blurRadius: 18,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
                 ),
                 child: Row(
                   children: [
-                    CircleAvatar(
-                      radius: 34,
-                      backgroundColor: Colors.white24,
-                      backgroundImage: widget.avatarUrl != null
-                          ? NetworkImage(widget.avatarUrl!)
-                          : null,
-                      child: widget.avatarUrl == null
-                          ? Text(
-                              widget.coachName.isNotEmpty
-                                  ? widget.coachName[0]
-                                  : 'C',
-                              style: GoogleFonts.poppins(
-                                fontSize: 26,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                    Container(
+                      width: 72,
+                      height: 72,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white38, width: 2),
+                      ),
+                      child: ClipOval(
+                        child: avatarUrl != null
+                            ? Image.network(avatarUrl!, fit: BoxFit.cover)
+                            : Container(
+                                color: Colors.white24,
+                                child: Center(
+                                  child: Text(
+                                    coachName.isNotEmpty ? coachName[0] : 'C',
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 28,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                               ),
-                            )
-                          : null,
+                      ),
                     ),
                     const SizedBox(width: 16),
                     Expanded(
@@ -128,35 +383,31 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                             children: [
                               Flexible(
                                 child: Text(
-                                  widget.coachName,
+                                  coachName,
                                   style: GoogleFonts.poppins(
                                     fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                                    fontWeight: FontWeight.w800,
                                     color: Colors.white,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              const Icon(Icons.verified,
-                                  color: AppTheme.accentGreen, size: 18),
+                              const Icon(Icons.verified, color: Colors.white, size: 18),
                             ],
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            widget.coachSpecialty,
+                            coachSpecialty,
                             style: GoogleFonts.manrope(
                               fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white.withValues(alpha: 0.9),
+                              color: Colors.white70,
                             ),
                           ),
-                          const SizedBox(height: 6),
+                          const SizedBox(height: 8),
                           Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 8, vertical: 3),
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                             decoration: BoxDecoration(
-                              color: Colors.white.withValues(alpha: 0.2),
+                              color: Colors.white24,
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -174,70 +425,16 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                     ),
                   ],
                 ),
-              ).animate().fadeIn(duration: 350.ms).slideY(begin: 0.08, end: 0),
-
-              const SizedBox(height: 24),
-
-              // Summary Stats Row
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildStatBox(
-                      'Trainees',
-                      '3 Active',
-                      Icons.group_rounded,
-                      AppTheme.primary,
-                      isDark,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildStatBox(
-                      'Rating',
-                      '5.0 ★',
-                      Icons.star_rounded,
-                      Colors.amber,
-                      isDark,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: _buildStatBox(
-                      'Routines',
-                      '12 Active',
-                      Icons.fitness_center_rounded,
-                      AppTheme.accentGreen,
-                      isDark,
-                    ),
-                  ),
-                ],
-              ).animate().fadeIn(delay: 150.ms),
-
+              ).animate().fadeIn(duration: 350.ms),
               const SizedBox(height: 28),
-
-              // Quick Actions
-              Text(
-                'Coach Workspace',
-                style: theme.textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 12),
-
+              // Quick actions
               Row(
                 children: [
                   Expanded(
                     child: CustomButton(
                       text: '+ New Routine',
                       icon: const Icon(Icons.add, color: Colors.white, size: 18),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Routine builder opened!'),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      },
+                      onPressed: () {},
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -245,260 +442,15 @@ class _CoachDashboardScreenState extends State<CoachDashboardScreen> {
                     child: CustomButton(
                       text: 'Trainee Chat',
                       isPrimary: false,
-                      icon: const Icon(Icons.chat_bubble_outline_rounded,
-                          size: 18),
-                      onPressed: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Trainee chat opened!'),
-                            behavior: SnackBarBehavior.floating,
-                          ),
-                        );
-                      },
+                      icon: const Icon(Icons.chat_bubble_outline_rounded, size: 18),
+                      onPressed: () {},
                     ),
                   ),
                 ],
-              ).animate().fadeIn(delay: 200.ms),
-
-              const SizedBox(height: 14),
-
-              // Meal Plan Requests Quick Access Card
-              InkWell(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const MealPlanRequestsScreen(),
-                    ),
-                  );
-                },
-                borderRadius: BorderRadius.circular(18),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: isDark ? AppTheme.surfaceDark : Colors.white,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(
-                      color: AppTheme.primary.withValues(alpha: 0.4),
-                      width: 1.2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primary.withValues(alpha: 0.08),
-                        blurRadius: 14,
-                        offset: const Offset(0, 3),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: AppTheme.primary.withValues(alpha: 0.15),
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: const Icon(
-                          Icons.restaurant_menu_rounded,
-                          color: AppTheme.primary,
-                          size: 24,
-                        ),
-                      ),
-                      const SizedBox(width: 14),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "Meal Plan Requests",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w700,
-                                    color: isDark ? AppTheme.textDark : Colors.black87,
-                                  ),
-                                ),
-                                const SizedBox(width: 8),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: AppTheme.primary,
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    "3 Pending",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 10,
-                                      fontWeight: FontWeight.w800,
-                                      color: const Color(0xFF0D0F0D),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              "Review trainee body stats & build customized meal plans",
-                              style: GoogleFonts.manrope(
-                                fontSize: 12,
-                                color: isDark ? AppTheme.textSecondary : Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 6),
-                      const Icon(
-                        Icons.arrow_forward_ios_rounded,
-                        color: AppTheme.primary,
-                        size: 16,
-                      ),
-                    ],
-                  ),
-                ),
-              ).animate().fadeIn(delay: 240.ms).slideY(begin: 0.05, end: 0),
-
-              const SizedBox(height: 24),
-
-              // Active Trainees Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Assigned Trainees',
-                    style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  StatusBadge.active(label: '${_trainees.length} Active'),
-                ],
-              ),
-              const SizedBox(height: 12),
-
-              // Trainees List
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: _trainees.length,
-                itemBuilder: (ctx, index) {
-                  final t = _trainees[index];
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(18)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              CircleAvatar(
-                                radius: 24,
-                                backgroundImage: NetworkImage(t['avatar']),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      t['name'],
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    Text(
-                                      t['plan'],
-                                      style: GoogleFonts.manrope(
-                                        fontSize: 12,
-                                        color: AppTheme.primary,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Text(
-                                t['lastActive'],
-                                style: GoogleFonts.manrope(
-                                  fontSize: 11,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(6),
-                                  child: LinearProgressIndicator(
-                                    value: t['progress'] as double,
-                                    minHeight: 6,
-                                    backgroundColor:
-                                        Colors.grey.withValues(alpha: 0.2),
-                                    valueColor:
-                                        const AlwaysStoppedAnimation<Color>(
-                                      AppTheme.accentGreen,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 10),
-                              Text(
-                                '${((t['progress'] as double) * 100).toInt()}%',
-                                style: GoogleFonts.manrope(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ).animate().fadeIn(delay: 250.ms),
+              ).animate().fadeIn(delay: 150.ms),
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildStatBox(String title, String value, IconData icon, Color color,
-      bool isDark) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 10),
-      decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF222222) : const Color(0xFFF6F6F9),
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: color, size: 22),
-          const SizedBox(height: 6),
-          Text(
-            value,
-            style: GoogleFonts.poppins(
-              fontSize: 15,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            title,
-            style: GoogleFonts.manrope(
-              fontSize: 11,
-              color: Colors.grey,
-            ),
-          ),
-        ],
       ),
     );
   }

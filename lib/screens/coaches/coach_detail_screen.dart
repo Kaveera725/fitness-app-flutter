@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:fitness/models/coach.dart';
 import 'package:fitness/widgets/gradient_button.dart';
 import 'package:fitness/widgets/status_badge.dart';
