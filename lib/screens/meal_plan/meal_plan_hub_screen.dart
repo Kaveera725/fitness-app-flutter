@@ -6,6 +6,7 @@ import '../../theme/app_theme.dart';
 import '../coaches/find_coach_screen.dart';
 import 'self_build_meal_plan_screen.dart';
 import 'request_meal_plan_screen.dart';
+import 'my_meal_plan_screen.dart';
 
 enum UserTier {
   free,
@@ -751,17 +752,47 @@ class _MealPlanHubScreenState extends State<MealPlanHubScreen> {
                 color: AppTheme.textDark,
               ),
             ),
-            TextButton.icon(
-              onPressed: _navigateToSelfBuild,
-              icon: const Icon(Icons.edit_note_rounded, color: AppTheme.primary, size: 18),
-              label: Text(
-                "Edit Plan",
-                style: GoogleFonts.manrope(
-                  color: AppTheme.primary,
-                  fontWeight: FontWeight.w800,
-                  fontSize: 13,
+            Row(
+              children: [
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => MyMealPlanScreen(
+                          initialSource: hasCoach
+                              ? PlanSource.coachAssigned
+                              : PlanSource.selfBuilt,
+                          coachName: _coach['name'] ?? "Coach Alex Vance",
+                        ),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.calendar_month_rounded,
+                      color: AppTheme.primary, size: 16),
+                  label: Text(
+                    "View Full Plan",
+                    style: GoogleFonts.manrope(
+                      color: AppTheme.primary,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12,
+                    ),
+                  ),
                 ),
-              ),
+                TextButton.icon(
+                  onPressed: _navigateToSelfBuild,
+                  icon: const Icon(Icons.edit_note_rounded,
+                      color: AppTheme.textSecondary, size: 16),
+                  label: Text(
+                    "Edit",
+                    style: GoogleFonts.manrope(
+                      color: AppTheme.textSecondary,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
@@ -902,14 +933,29 @@ class _MealPlanHubScreenState extends State<MealPlanHubScreen> {
   // Meal Item Card
   // ------------------------------------------
   Widget _buildMealCard(MealItem meal) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppTheme.surfaceDark,
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: AppTheme.surfaceBorder, width: 1),
-      ),
+    return InkWell(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => MyMealPlanScreen(
+              initialSource: hasCoach
+                  ? PlanSource.coachAssigned
+                  : PlanSource.selfBuilt,
+              coachName: _coach['name'] ?? "Coach Alex Vance",
+            ),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(18),
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(14),
+        decoration: BoxDecoration(
+          color: AppTheme.surfaceDark,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(color: AppTheme.surfaceBorder, width: 1),
+        ),
       child: Row(
         children: [
           // Small Thumbnail with Rounded Corners
@@ -984,8 +1030,9 @@ class _MealPlanHubScreenState extends State<MealPlanHubScreen> {
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   // ==========================================
   // State Simulation Modal Sheet
