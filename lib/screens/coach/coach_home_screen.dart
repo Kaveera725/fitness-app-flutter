@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/app_theme.dart';
 import 'meal_plans/meal_plan_requests_screen.dart';
+import 'my_clients_screen.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Local Data Models
@@ -84,7 +85,12 @@ class _ActivityItem {
 
 class CoachHomeScreen extends StatefulWidget {
   final String coachName;
-  const CoachHomeScreen({super.key, this.coachName = 'Marcus'});
+  final VoidCallback? onViewAllClients;
+  const CoachHomeScreen({
+    super.key,
+    this.coachName = 'Marcus',
+    this.onViewAllClients,
+  });
 
   @override
   State<CoachHomeScreen> createState() => _CoachHomeScreenState();
@@ -733,8 +739,14 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
             SliverToBoxAdapter(
               child: _sectionHeader(
                 'My Clients',
-                trailingLabel: 'See All (6)',
-                onTrailing: () {},
+                trailingLabel: 'See All',
+                onTrailing: widget.onViewAllClients ??
+                    () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => MyClientsScreen(coachName: widget.coachName),
+                          ),
+                        ),
               ).animate().fadeIn(delay: 350.ms, duration: 350.ms),
             ),
             SliverToBoxAdapter(
