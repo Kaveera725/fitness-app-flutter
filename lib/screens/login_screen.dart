@@ -6,6 +6,7 @@ import '../widgets/google_sign_in_button.dart';
 import 'signup_screen.dart';
 import 'main_tab_screen.dart';
 import 'admin/admin_login_screen.dart';
+import 'coach/coach_dashboard_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -63,10 +64,25 @@ class _LoginScreenState extends State<LoginScreen> {
           backgroundColor: Colors.green,
         ),
       );
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const MainTabScreen()),
-      );
+
+      final user = ApiService.instance.currentUser;
+      if (user != null && user.isCoach) {
+        // Coach → dedicated coach dashboard
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => CoachDashboardScreen(
+              coachName: user.name ?? 'Coach',
+            ),
+          ),
+        );
+      } else {
+        // Regular / Premium member → main tab
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => const MainTabScreen()),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
