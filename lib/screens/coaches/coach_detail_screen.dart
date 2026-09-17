@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fitness/models/coach.dart';
 import 'package:fitness/widgets/gradient_button.dart';
 import 'package:fitness/widgets/status_badge.dart';
+import 'package:fitness/widgets/coach_review_card.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:fitness/screens/subscription/subscription_screen.dart';
 
@@ -73,7 +74,7 @@ class _CoachDetailScreenState extends State<CoachDetailScreen> {
                           child: Icon(
                             Icons.fitness_center_rounded,
                             size: 64,
-                            color: Colors.white.withOpacity(0.3),
+                            color: Colors.white.withValues(alpha: 0.3),
                           ),
                         ),
                       );
@@ -84,9 +85,9 @@ class _CoachDetailScreenState extends State<CoachDetailScreen> {
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         colors: [
-                          Colors.black.withOpacity(0.3),
+                          Colors.black.withValues(alpha: 0.3),
                           Colors.transparent,
-                          Colors.black.withOpacity(0.7),
+                          Colors.black.withValues(alpha: 0.7),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -206,13 +207,13 @@ class _CoachDetailScreenState extends State<CoachDetailScreen> {
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
-                            const Color(0xFF5E35B1).withOpacity(0.08),
-                            const Color(0xFF311B92).withOpacity(0.04),
+                            const Color(0xFF5E35B1).withValues(alpha: 0.08),
+                            const Color(0xFF311B92).withValues(alpha: 0.04),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(16),
                         border: Border.all(
-                          color: const Color(0xFF5E35B1).withOpacity(0.25),
+                          color: const Color(0xFF5E35B1).withValues(alpha: 0.25),
                         ),
                       ),
                       child: Column(
@@ -222,7 +223,7 @@ class _CoachDetailScreenState extends State<CoachDetailScreen> {
                               Container(
                                 padding: const EdgeInsets.all(10),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFF5E35B1).withOpacity(0.12),
+                                  color: const Color(0xFF5E35B1).withValues(alpha: 0.12),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: const Icon(
@@ -416,70 +417,8 @@ class _CoachDetailScreenState extends State<CoachDetailScreen> {
                   const SizedBox(height: 14),
 
                   if (widget.coach.reviews.isNotEmpty) ...[
-                    ...widget.coach.reviews.map((review) => Container(
-                          margin: const EdgeInsets.only(bottom: 12),
-                          padding: const EdgeInsets.all(14),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
-                                blurRadius: 6,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  CircleAvatar(
-                                    radius: 14,
-                                    backgroundColor: const Color(0xFF5E35B1)
-                                        .withOpacity(0.12),
-                                    child: Text(
-                                      review.reviewer.isNotEmpty
-                                          ? review.reviewer[0]
-                                          : 'U',
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Color(0xFF5E35B1),
-                                      ),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    review.reviewer,
-                                    style: GoogleFonts.manrope(
-                                      fontWeight: FontWeight.w700,
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                  const Spacer(),
-                                  Row(
-                                    children: List.generate(
-                                      review.rating.round(),
-                                      (_) => const Icon(Icons.star_rounded,
-                                          size: 15, color: Colors.amber),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 6),
-                              Text(
-                                review.comment,
-                                style: GoogleFonts.manrope(
-                                  fontSize: 13,
-                                  color: Colors.grey.shade700,
-                                  height: 1.4,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )),
+                    ...widget.coach.reviews
+                        .map((review) => CoachReviewCard(review: review)),
                   ] else ...[
                     Center(
                       child: Padding(
