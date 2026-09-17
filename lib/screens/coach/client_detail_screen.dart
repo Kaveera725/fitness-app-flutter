@@ -7,6 +7,7 @@ import '../../theme/app_theme.dart';
 import '../../widgets/status_badge.dart';
 import 'meal_plans/build_meal_plan_for_user_screen.dart';
 import 'meal_plans/meal_plan_request_model.dart';
+import 'assign_workout_plan_screen.dart';
 import 'my_clients_screen.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -226,154 +227,21 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
     );
   }
 
-  void _openAssignWorkoutSheet() {
-    final routines = [
-      {
-        'title': '12-Week Hypertrophy Protocol',
-        'split': '4 Days/wk • Push/Pull/Legs',
-        'level': 'Intermediate',
-      },
-      {
-        'title': '5x5 Heavy Strength Foundation',
-        'split': '3 Days/wk • Full Body Compounds',
-        'level': 'Advanced',
-      },
-      {
-        'title': 'Metabolic Conditioning & Fat Loss',
-        'split': '5 Days/wk • HIIT & Circuit',
-        'level': 'All Levels',
-      },
-      {
-        'title': 'Athletic Speed & Agility Track',
-        'split': '4 Days/wk • Plyometrics & Core',
-        'level': 'Intermediate',
-      },
-      {
-        'title': 'Mobility, Recovery & Posture Rehab',
-        'split': '3 Days/wk • Low-Impact Flow',
-        'level': 'Beginner',
-      },
-    ];
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppTheme.surfaceDark,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+  void _openAssignWorkoutPlanBuilder() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AssignWorkoutPlanScreen(
+          clientName: _name,
+          clientAvatar: _avatarUrl,
+          currentPlanTitle: _currentWorkoutPlan,
+          onPlanSaved: (newTitle) {
+            setState(() {
+              _currentWorkoutPlan = newTitle;
+            });
+          },
+        ),
       ),
-      builder: (ctx) {
-        return Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Center(
-                child: Container(
-                  width: 36,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppTheme.surfaceBorder,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Assign Workout Routine',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w700,
-                  color: AppTheme.textDark,
-                ),
-              ),
-              Text(
-                'Select custom training program for $_name',
-                style: GoogleFonts.manrope(
-                  fontSize: 12,
-                  color: AppTheme.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 16),
-              ...routines.map((r) {
-                final isCurrent = r['title'] == _currentWorkoutPlan;
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 10),
-                  decoration: BoxDecoration(
-                    color: isCurrent
-                        ? AppTheme.accentGreen.withValues(alpha: 0.12)
-                        : AppTheme.surfaceLighter,
-                    borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: isCurrent
-                          ? AppTheme.accentGreen
-                          : AppTheme.surfaceBorder,
-                    ),
-                  ),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: 2),
-                    title: Text(
-                      r['title']!,
-                      style: GoogleFonts.poppins(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w700,
-                        color: AppTheme.textDark,
-                      ),
-                    ),
-                    subtitle: Text(
-                      '${r['split']} • ${r['level']}',
-                      style: GoogleFonts.manrope(
-                        fontSize: 11,
-                        color: AppTheme.textSecondary,
-                      ),
-                    ),
-                    trailing: isCurrent
-                        ? const Icon(Icons.check_circle_rounded,
-                            color: AppTheme.accentGreen, size: 20)
-                        : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppTheme.surfaceDark,
-                              foregroundColor: AppTheme.textDark,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 6),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                side: const BorderSide(
-                                    color: AppTheme.surfaceBorder),
-                              ),
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _currentWorkoutPlan = r['title']!;
-                                _currentWorkoutSplit = r['split']!;
-                              });
-                              Navigator.pop(ctx);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                      'Workout assigned: ${r['title']} to $_name!'),
-                                  backgroundColor: AppTheme.accentGreen,
-                                ),
-                              );
-                            },
-                            child: Text(
-                              'Assign',
-                              style: GoogleFonts.poppins(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ),
-                  ),
-                );
-              }),
-            ],
-          ),
-        );
-      },
     );
   }
 
@@ -1123,7 +991,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                               size: 16, color: AppTheme.accentGreen),
                         ),
                         GestureDetector(
-                          onTap: _openAssignWorkoutSheet,
+                          onTap: _openAssignWorkoutPlanBuilder,
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 4),
@@ -1293,7 +1161,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen> {
                 borderRadius: BorderRadius.circular(14),
               ),
             ),
-            onPressed: _openAssignWorkoutSheet,
+            onPressed: _openAssignWorkoutPlanBuilder,
             icon: const Icon(Icons.fitness_center_rounded,
                 size: 16, color: AppTheme.textDark),
             label: Text(

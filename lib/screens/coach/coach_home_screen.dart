@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/app_theme.dart';
 import 'client_detail_screen.dart';
+import 'coach_profile_screen.dart';
 import 'meal_plans/meal_plan_requests_screen.dart';
 import 'my_clients_screen.dart';
 
@@ -525,6 +526,22 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
                   _openBroadcastDialog();
                 },
               ),
+              const SizedBox(height: 12),
+              _quickActionTile(
+                icon: Icons.person_pin_rounded,
+                iconColor: const Color(0xFFB388FF),
+                title: 'My Coach Profile & Stats',
+                subtitle: 'Manage public bio, certifications, and roster availability',
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => CoachProfileScreen(coachName: widget.coachName),
+                    ),
+                  );
+                },
+              ),
             ],
           ),
         );
@@ -863,71 +880,91 @@ class _CoachHomeScreenState extends State<CoachHomeScreen> {
                 ),
                 const SizedBox(height: 6),
                 // Rating badge
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentGreen.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppTheme.accentGreen.withValues(alpha: 0.30),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.star_rounded, color: AppTheme.accentGreen, size: 14),
-                      const SizedBox(width: 4),
-                      Text(
-                        '4.8 Rating',
-                        style: GoogleFonts.poppins(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.accentGreen,
-                        ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => CoachProfileScreen(coachName: widget.coachName),
                       ),
-                    ],
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentGreen.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(
+                        color: AppTheme.accentGreen.withValues(alpha: 0.30),
+                        width: 1,
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const Icon(Icons.star_rounded, color: AppTheme.accentGreen, size: 14),
+                        const SizedBox(width: 4),
+                        Text(
+                          '4.9 Rating',
+                          style: GoogleFonts.poppins(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.accentGreen,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],
             ),
           ),
           // Avatar with online dot
-          Stack(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppTheme.accentGreen, width: 2),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => CoachProfileScreen(coachName: widget.coachName),
                 ),
-                child: ClipOval(
-                  child: Image.network(
-                    'https://i.pravatar.cc/150?img=3',
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, _, _) => Container(
-                      color: AppTheme.surfaceLighter,
-                      child: const Icon(Icons.person_rounded,
-                          color: AppTheme.textSecondary, size: 28),
+              );
+            },
+            child: Stack(
+              children: [
+                Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    border: Border.all(color: AppTheme.accentGreen, width: 2),
+                  ),
+                  child: ClipOval(
+                    child: Image.network(
+                      'https://i.pravatar.cc/150?img=3',
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, _, _) => Container(
+                        color: AppTheme.surfaceLighter,
+                        child: const Icon(Icons.person_rounded,
+                            color: AppTheme.textSecondary, size: 28),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              Positioned(
-                bottom: 0,
-                right: 0,
-                child: Container(
-                  width: 14,
-                  height: 14,
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentGreen,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppTheme.backgroundDark, width: 2),
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    width: 14,
+                    height: 14,
+                    decoration: BoxDecoration(
+                      color: AppTheme.accentGreen,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: AppTheme.backgroundDark, width: 2),
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ).animate().fadeIn(duration: 400.ms).slideY(begin: -0.1, end: 0),
