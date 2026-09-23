@@ -3,7 +3,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/app_theme.dart';
-import 'achievements_screen.dart';
+import '../achievements/achievements_screen.dart';
 import 'models/progress_mock_data.dart';
 import 'models/progress_models.dart';
 import 'widgets/achievements_preview_section.dart';
@@ -12,6 +12,7 @@ import 'widgets/progress_photos_section.dart';
 import 'widgets/streak_calendar_section.dart';
 import 'widgets/time_range_selector.dart';
 import 'widgets/weight_trend_chart.dart';
+
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
