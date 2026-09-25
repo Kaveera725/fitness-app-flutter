@@ -5,7 +5,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../theme/app_theme.dart';
-import '../workout_summary_screen.dart';
+import 'workout_complete_screen.dart';
 
 class WorkoutPlayerScreen extends StatefulWidget {
   final String? title;
@@ -745,13 +745,17 @@ class _WorkoutPlayerScreenState extends State<WorkoutPlayerScreen> {
             ),
             const Spacer(),
 
-            // Finish Workout Button
             ElevatedButton(
               onPressed: () {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => const WorkoutSummaryScreen(),
+                    builder: (_) => WorkoutCompleteScreen(
+                      workoutName: widget.title ?? widget.exerciseName ?? "Upper Body Hypertrophy",
+                      workoutCategory: "${widget.equipment ?? 'Dumbbell'} · ${widget.targetMuscle ?? 'Strength'}",
+                      durationSeconds: _elapsedSeconds > 0 ? _elapsedSeconds : 2548,
+                      caloriesBurned: (_elapsedSeconds * 0.15).round() > 50 ? (_elapsedSeconds * 0.15).round() : 384,
+                    ),
                   ),
                 );
               },
