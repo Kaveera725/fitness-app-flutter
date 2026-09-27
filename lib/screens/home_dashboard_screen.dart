@@ -11,6 +11,7 @@ import 'workout_detail_screen.dart';
 import 'workout_library_screen.dart';
 import 'subscription/subscription_screen.dart';
 import 'coaches/find_coach_screen.dart';
+import 'notifications/notifications_screen.dart';
 
 class HomeDashboardScreen extends StatefulWidget {
   const HomeDashboardScreen({super.key});
@@ -235,34 +236,98 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           ],
         ),
 
-        // Profile Avatar
-        Container(
-          padding: EdgeInsets.all(isPremium ? 2.5 : 2),
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            border: Border.all(
-              color: isPremium ? AppTheme.accentPurple : AppTheme.surfaceBorder,
-              width: 1.5,
-            ),
-          ),
-          child: ClipOval(
-            child: Container(
-              width: 50,
-              height: 50,
-              color: const Color(0xFF1E221E),
-              child: Image.network(
-                "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&q=80",
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return const Icon(
-                    Icons.person,
-                    color: AppTheme.primary,
-                    size: 26,
-                  );
-                },
+        // Header Actions: Notification Bell + Profile Avatar
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Bell icon button with glowing unread badge
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const NotificationsScreen(),
+                  ),
+                );
+              },
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceDark,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppTheme.surfaceBorder,
+                    width: 1.2,
+                  ),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    const Icon(
+                      Icons.notifications_outlined,
+                      color: AppTheme.textDark,
+                      size: 22,
+                    ),
+                    // Neon unread indicator dot
+                    Positioned(
+                      top: 10,
+                      right: 11,
+                      child: Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: AppTheme.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppTheme.surfaceDark,
+                            width: 1.5,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppTheme.primary.withValues(alpha: 0.6),
+                              blurRadius: 6,
+                              spreadRadius: 1,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
-          ),
+            const SizedBox(width: 12),
+
+            // Profile Avatar
+            Container(
+              padding: EdgeInsets.all(isPremium ? 2.5 : 2),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: isPremium ? AppTheme.accentPurple : AppTheme.surfaceBorder,
+                  width: 1.5,
+                ),
+              ),
+              child: ClipOval(
+                child: Container(
+                  width: 46,
+                  height: 46,
+                  color: const Color(0xFF1E221E),
+                  child: Image.network(
+                    "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150&q=80",
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Icon(
+                        Icons.person,
+                        color: AppTheme.primary,
+                        size: 24,
+                      );
+                    },
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ],
     );
