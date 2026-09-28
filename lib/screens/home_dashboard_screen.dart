@@ -12,6 +12,7 @@ import 'workout_library_screen.dart';
 import 'subscription/subscription_screen.dart';
 import 'coaches/find_coach_screen.dart';
 import 'notifications/notifications_screen.dart';
+import 'search/global_search_screen.dart';
 
 class HomeDashboardScreen extends StatefulWidget {
   const HomeDashboardScreen({super.key});
@@ -236,10 +237,39 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
           ],
         ),
 
-        // Header Actions: Notification Bell + Profile Avatar
+        // Header Actions: Search + Notification Bell + Profile Avatar
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // Search icon button
+            GestureDetector(
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => const GlobalSearchScreen(),
+                  ),
+                );
+              },
+              child: Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppTheme.surfaceDark,
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppTheme.surfaceBorder,
+                    width: 1.2,
+                  ),
+                ),
+                child: const Icon(
+                  Icons.search_rounded,
+                  color: AppTheme.textDark,
+                  size: 20,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+
             // Bell icon button with glowing unread badge
             GestureDetector(
               onTap: () {
