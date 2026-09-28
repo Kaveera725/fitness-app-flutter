@@ -72,7 +72,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.amber.withOpacity(0.4),
+                              color: Colors.amber.withValues(alpha: 0.4),
                               blurRadius: 20,
                               spreadRadius: 2,
                             ),
@@ -123,7 +123,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                                 width: 38,
                                 height: 38,
                                 decoration: BoxDecoration(
-                                  color: AppTheme.primary.withOpacity(0.3),
+                                  color: AppTheme.primary.withValues(alpha: 0.3),
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Icon(
@@ -173,7 +173,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                       Row(
                         children: [
                           Expanded(
-                            child: _PlanCard(
+                            child: PlanCard(
                               label: 'Monthly',
                               price: '\$19.99',
                               period: '/month',
@@ -184,7 +184,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
                           ),
                           const SizedBox(width: 12),
                           Expanded(
-                            child: _PlanCard(
+                            child: PlanCard(
                               label: 'Annual',
                               price: '\$199.99',
                               period: '/year',
@@ -242,7 +242,7 @@ class _SubscriptionScreenState extends State<SubscriptionScreen> {
 
 // ── Plan Card Widget ──────────────────────────────────────────────────────────
 
-class _PlanCard extends StatelessWidget {
+class PlanCard extends StatelessWidget {
   final String label;
   final String price;
   final String period;
@@ -250,7 +250,8 @@ class _PlanCard extends StatelessWidget {
   final String? badge;
   final VoidCallback onTap;
 
-  const _PlanCard({
+  const PlanCard({
+    super.key,
     required this.label,
     required this.price,
     required this.period,
@@ -269,8 +270,8 @@ class _PlanCard extends StatelessWidget {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(18),
           color: isSelected
-              ? const Color(0xFF5E35B1).withOpacity(0.3)
-              : Colors.white.withOpacity(0.06),
+              ? const Color(0xFF5E35B1).withValues(alpha: 0.3)
+              : Colors.white.withValues(alpha: 0.06),
           border: Border.all(
             color: isSelected ? const Color(0xFF7C4DFF) : Colors.white24,
             width: isSelected ? 2.0 : 1.0,
@@ -278,7 +279,7 @@ class _PlanCard extends StatelessWidget {
           boxShadow: isSelected
               ? [
                   BoxShadow(
-                    color: const Color(0xFF7C4DFF).withOpacity(0.3),
+                    color: const Color(0xFF7C4DFF).withValues(alpha: 0.3),
                     blurRadius: 14,
                     spreadRadius: 1,
                   ),
