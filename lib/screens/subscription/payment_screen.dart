@@ -9,11 +9,15 @@ import 'confirmation_screen.dart';
 class PaymentScreen extends StatefulWidget {
   final String planLabel;
   final String planPrice;
+  final bool isUpdatingPaymentMethod;
+  final void Function(String lastFour, String expiry)? onPaymentMethodUpdated;
 
   const PaymentScreen({
     super.key,
     required this.planLabel,
     required this.planPrice,
+    this.isUpdatingPaymentMethod = false,
+    this.onPaymentMethodUpdated,
   });
 
   @override
@@ -42,22 +46,26 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
     setState(() => _isLoading = true);
 
-    // TODO: Integrate Stripe (or other payment gateway) here.
-    // Example with Stripe Flutter SDK:
-    // final paymentMethod = await Stripe.instance.createPaymentMethod(
-    //   params: PaymentMethodParams.card(
-    //     paymentMethodData: PaymentMethodData(
-    //       billingDetails: BillingDetails(name: _nameController.text),
-    //     ),
-    //   ),
-    // );
-    // Then send paymentMethod.id to your backend to create a PaymentIntent.
-
     // Simulate network delay for UI demo
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 1));
 
     if (!mounted) return;
     setState(() => _isLoading = false);
+
+    if (widget.isUpdatingPaymentMethod) {
+      final cardRaw = _cardNumberController.text.replaceAll(' ', '');
+      final lastFour = cardRaw.length >= 4 ? cardRaw.substring(cardRaw.length - 4) : '4242';
+      final expiry = _expiryController.text.isNotEmpty ? _expiryController.text : '08/28';
+      widget.onPaymentMethodUpdated?.call(lastFour, expiry);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Payment method updated successfully!'),
+          backgroundColor: Color(0xFF1A1D1A),
+        ),
+      );
+      Navigator.pop(context, {'lastFour': lastFour, 'expiry': expiry});
+      return;
+    }
 
     Navigator.pushReplacement(
       context,
@@ -91,7 +99,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ),
                     const SizedBox(width: 16),
                     Text(
-                      'Payment',
+                      widget.isUpdatingPaymentMethod ? 'Update Payment Method' : 'Payment',
                       style: GoogleFonts.poppins(
                         fontSize: 20,
                         fontWeight: FontWeight.w700,
@@ -114,10 +122,10 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: AppTheme.primary.withOpacity(0.2),
+                            color: AppTheme.primary.withValues(alpha: 0.2),
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
-                                color: AppTheme.primary.withOpacity(0.4)),
+                                color: AppTheme.primary.withValues(alpha: 0.4)),
                           ),
                           child: Row(
                             children: [
@@ -151,7 +159,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         // ── Quick Pay Buttons ─────────────────────────────
                         // TODO: Replace with real provider buttons (Apple Pay / Google Pay)
                         // using the pay package: https://pub.dev/packages/pay
-                        _QuickPayButton(
+                        QuickPayButton(
                           icon: Icons.account_balance_wallet_rounded,
                           label: 'Continue with Google Pay',
                           onTap: () {
@@ -161,7 +169,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                         const SizedBox(height: 12),
 
-                        _QuickPayButton(
+                        QuickPayButton(
                           icon: Icons.apple_rounded,
                           label: 'Continue with Apple Pay',
                           onTap: () {
@@ -189,7 +197,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         const SizedBox(height: 24),
 
                         // ── Card Fields ───────────────────────────────────
-                        _CardField(
+                        CardField(
                           controller: _nameController,
                           label: 'Cardholder Name',
                           hint: 'John Doe',
@@ -200,7 +208,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
                         const SizedBox(height: 16),
 
-                        _CardField(
+                        CardField(
                           controller: _cardNumberController,
                           label: 'Card Number',
                           hint: '1234 5678 9012 3456',
@@ -209,7 +217,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly,
                             LengthLimitingTextInputFormatter(16),
-                            _CardNumberFormatter(),
+                            CardNumberFormatter(),
                           ],
                           validator: (v) {
                             if (v == null || v.isEmpty) return 'Required';
@@ -225,7 +233,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: _CardField(
+                              child: CardField(
                                 controller: _expiryController,
                                 label: 'Expiry',
                                 hint: 'MM/YY',
@@ -234,7 +242,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly,
                                   LengthLimitingTextInputFormatter(4),
-                                  _ExpiryFormatter(),
+                                  ExpiryFormatter(),
                                 ],
                                 validator: (v) =>
                                     v == null || v.isEmpty ? 'Required' : null,
@@ -242,7 +250,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                             ),
                             const SizedBox(width: 16),
                             Expanded(
-                              child: _CardField(
+                              child: CardField(
                                 controller: _cvvController,
                                 label: 'CVV',
                                 hint: '•••',
@@ -293,7 +301,9 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     ? const Center(
                         child: CircularProgressIndicator(color: Colors.white))
                     : GradientButton(
-                        text: 'Pay ${widget.planPrice}',
+                        text: widget.isUpdatingPaymentMethod
+                            ? 'Save Payment Method'
+                            : 'Pay ${widget.planPrice}',
                         onPressed: _handlePayment,
                         icon: const Icon(Icons.check_rounded,
                             color: Colors.white, size: 20),
@@ -309,12 +319,12 @@ class _PaymentScreenState extends State<PaymentScreen> {
 
 // ── Quick Pay Button ─────────────────────────────────────────────────────────
 
-class _QuickPayButton extends StatelessWidget {
+class QuickPayButton extends StatelessWidget {
   final IconData icon;
   final String label;
   final VoidCallback onTap;
-  const _QuickPayButton(
-      {required this.icon, required this.label, required this.onTap});
+  const QuickPayButton(
+      {super.key, required this.icon, required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -323,7 +333,7 @@ class _QuickPayButton extends StatelessWidget {
       child: Container(
         height: 52,
         decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.08),
+          color: Colors.white.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(color: Colors.white24),
         ),
@@ -346,7 +356,7 @@ class _QuickPayButton extends StatelessWidget {
 
 // ── Card Form Field ──────────────────────────────────────────────────────────
 
-class _CardField extends StatelessWidget {
+class CardField extends StatelessWidget {
   final TextEditingController controller;
   final String label;
   final String hint;
@@ -356,7 +366,8 @@ class _CardField extends StatelessWidget {
   final String? Function(String?)? validator;
   final bool obscureText;
 
-  const _CardField({
+  const CardField({
+    super.key,
     required this.controller,
     required this.label,
     required this.hint,
@@ -391,7 +402,7 @@ class _CardField extends StatelessWidget {
                 GoogleFonts.manrope(color: Colors.white38, fontSize: 14),
             prefixIcon: Icon(icon, color: AppTheme.primaryLight, size: 20),
             filled: true,
-            fillColor: Colors.white.withOpacity(0.08),
+            fillColor: Colors.white.withValues(alpha: 0.08),
             contentPadding:
                 const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             border: OutlineInputBorder(
@@ -427,7 +438,7 @@ class _CardField extends StatelessWidget {
 
 // ── Input Formatters ─────────────────────────────────────────────────────────
 
-class _CardNumberFormatter extends TextInputFormatter {
+class CardNumberFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {
@@ -445,7 +456,7 @@ class _CardNumberFormatter extends TextInputFormatter {
   }
 }
 
-class _ExpiryFormatter extends TextInputFormatter {
+class ExpiryFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
       TextEditingValue oldValue, TextEditingValue newValue) {

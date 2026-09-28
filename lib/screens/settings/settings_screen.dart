@@ -5,7 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../services/api_service.dart';
 import '../../theme/app_theme.dart';
 import '../login_screen.dart';
-import '../subscription/subscription_screen.dart';
+import '../subscription/manage_subscription_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final bool isGoogleUser;
@@ -342,7 +342,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
+                            MaterialPageRoute(builder: (_) => const ManageSubscriptionScreen()),
                           );
                         },
                         icon: const Icon(Icons.tune_rounded, size: 18),

@@ -10,6 +10,7 @@ import '../../widgets/custom_text_field.dart';
 import '../login_screen.dart';
 import '../coaches/find_coach_screen.dart';
 import '../subscription/subscription_screen.dart';
+import '../subscription/manage_subscription_screen.dart';
 import '../settings/settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -1011,7 +1012,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
           onTap: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (_) => const SubscriptionScreen()),
+              MaterialPageRoute(
+                builder: (_) => _isPremium
+                    ? const ManageSubscriptionScreen()
+                    : const SubscriptionScreen(),
+              ),
             );
           },
         ),
