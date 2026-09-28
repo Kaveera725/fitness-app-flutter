@@ -10,6 +10,7 @@ import '../../widgets/custom_text_field.dart';
 import '../login_screen.dart';
 import '../coaches/find_coach_screen.dart';
 import '../subscription/subscription_screen.dart';
+import '../settings/settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final bool isGoogleUser;
@@ -556,39 +557,67 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     color: AppTheme.textDark,
                   ),
                 ),
-                // Glowing Lightning Bolt Badge
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF0D0F0D).withValues(alpha: 0.85),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(
-                      color: AppTheme.primary.withValues(alpha: 0.5),
-                      width: 1.2,
-                    ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppTheme.primary.withValues(alpha: 0.25),
-                        blurRadius: 10,
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.bolt_rounded, size: 16, color: AppTheme.primary),
-                      const SizedBox(width: 4),
-                      Text(
-                        "42d STREAK",
-                        style: GoogleFonts.manrope(
-                          fontSize: 11,
-                          fontWeight: FontWeight.w800,
-                          color: AppTheme.primary,
-                          letterSpacing: 0.4,
+                Row(
+                  children: [
+                    // Glowing Lightning Bolt Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0D0F0D).withValues(alpha: 0.85),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: AppTheme.primary.withValues(alpha: 0.5),
+                          width: 1.2,
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppTheme.primary.withValues(alpha: 0.25),
+                            blurRadius: 10,
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.bolt_rounded, size: 16, color: AppTheme.primary),
+                          const SizedBox(width: 4),
+                          Text(
+                            "42d STREAK",
+                            style: GoogleFonts.manrope(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: AppTheme.primary,
+                              letterSpacing: 0.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => SettingsScreen(isGoogleUser: widget.isGoogleUser),
+                          ),
+                        );
+                      },
+                      borderRadius: BorderRadius.circular(20),
+                      child: Container(
+                        padding: const EdgeInsets.all(7),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF0D0F0D).withValues(alpha: 0.85),
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: AppTheme.surfaceBorder,
+                            width: 1.2,
+                          ),
+                        ),
+                        child: const Icon(Icons.settings_outlined, size: 18, color: AppTheme.textDark),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -1051,6 +1080,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => const FindCoachScreen()),
+            );
+          },
+        ),
+        const SizedBox(height: 10),
+
+        // Settings Tile
+        _buildActionTile(
+          icon: Icons.settings_rounded,
+          title: "Settings",
+          subtitle: "Account, preferences, notifications & privacy",
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => SettingsScreen(isGoogleUser: widget.isGoogleUser),
+              ),
             );
           },
         ),
